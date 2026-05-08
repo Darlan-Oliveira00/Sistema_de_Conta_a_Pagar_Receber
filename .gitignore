@@ -199,7 +199,6 @@ data/
 *.sqlite3
 
 # Test files
-backend/criptografia.py
 *test*.xlsx
 *test*.csv
 
