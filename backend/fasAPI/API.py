@@ -2,8 +2,7 @@ import requests
 import json
 from pprint import pprint
 
-cnpj = '00.000.000/0001-91'
-cnpj = cnpj.split('/')
+cnpj = '00.000.000/0001-91'.split('/')
 print(cnpj)
 url_base = f'https://brasilapi.com.br/api/cnpj/v1/{cnpj}'
 
