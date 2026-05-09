@@ -67,7 +67,7 @@ venv.bak/
 # ============================================
 # Environment Variables & Secrets
 # ============================================
-.env
+backend/API/.env
 .env.*
 .env.local
 .env.development
