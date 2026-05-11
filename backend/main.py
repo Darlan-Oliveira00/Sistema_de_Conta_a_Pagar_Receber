@@ -5,7 +5,6 @@ from backend.API import routes
 from fastapi import FastAPI
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     database.init_db()

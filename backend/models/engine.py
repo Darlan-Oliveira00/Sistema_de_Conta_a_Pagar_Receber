@@ -12,7 +12,7 @@ class cliente(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     nome: Mapped[str] = mapped_column(String(150))
-    cpf: Mapped[str] = mapped_column(String(150), index=True)
+    cpf: Mapped[str] = mapped_column(String(150), unique=True, index=True)
     senha: Mapped[str] = mapped_column(String(150), index=True)
     data_nascimento: Mapped[datetime] = mapped_column(DateTime)
     email: Mapped[str] = mapped_column(String(100))
@@ -47,7 +47,7 @@ class fornecedor(Base):
     __tablename__ = 'fornecedor'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    cnpj: Mapped[str] = mapped_column(String(150), index=True)
+    cnpj: Mapped[str] = mapped_column(String(150), unique=True, index=True)
     senha: Mapped[str] = mapped_column(String(150), index=True)
     nome_oficial_empresa: Mapped[str] = mapped_column(String(150))
     nome_cormecial_empresa: Mapped[str] = mapped_column(String(150))
@@ -60,13 +60,13 @@ class fornecedor(Base):
     email: Mapped[str] = mapped_column(String(100))
     numero_telefone_empresa: Mapped[str] = mapped_column(String(11))
     cep: Mapped[str] = mapped_column(String(9))
-    uf: Mapped[str] = mapped_column(String(2))
+    uf: Mapped[str] = mapped_column(String(10))
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
 
-class fornecedorPOST(BaseModel):
+class fornecedorPOST(BaseModel):  # class despesasPOST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cnpj: str
     senha: str
@@ -77,8 +77,8 @@ class fornecedorPOST(BaseModel):
     data_abertura: datetime
     natureza_juridica: str
     cnae: str
-    capital_social: str
-    porte_emprese: str
+    capital_social: float
+    porte_empresa: str
     email: str
     numero_telefone_empresa: str
     cep: str

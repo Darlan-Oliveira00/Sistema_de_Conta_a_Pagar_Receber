@@ -12,8 +12,8 @@ load_dotenv()
 HASH_SALT = os.getenv("HASH_SALT").encode()
 CRYPTO_TOKEN = bytes.fromhex(os.getenv("CRYPTO_TOKEN"))
 
-def cpf_hash(cpf:str) -> str:
-    return hmac.new(HASH_SALT, cpf.encode(), hashlib.sha256).hexdigest()
+def cpf_cnpj_hash(cpf_cnpj:str) -> str:
+    return hmac.new(HASH_SALT, cpf_cnpj.encode(), hashlib.sha256).hexdigest()
 
 def criptografar_cpf(cpf: str) -> str:
     aesgcm = AESGCM(CRYPTO_TOKEN)
