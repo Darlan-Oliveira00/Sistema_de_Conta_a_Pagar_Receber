@@ -12,7 +12,7 @@ load_dotenv()
 HASH_SALT = os.getenv("HASH_SALT").encode()
 CRYPTO_TOKEN = bytes.fromhex(os.getenv("CRYPTO_TOKEN"))
 
-def HASH_cpf(cpf:str) -> str:
+def cpf_hash(cpf:str) -> str:
     return hmac.new(HASH_SALT, cpf.encode(), hashlib.sha256).hexdigest()
 
 def criptografar_cpf(cpf: str) -> str:
@@ -29,7 +29,7 @@ def descriptografar_cpf(dado: str) -> str:
     aesgcm = AESGCM(CRYPTO_TOKEN)
     return aesgcm.decrypt(iv, cifrado, None).decode()
 
-def hash_senha(senha: str) -> str:
+def senha_hash(senha: str) -> str:
     return bcrypt.hashpw(senha.encode(), bcrypt.gensalt(rounds=10)).decode()
 
 def verificar_senha(senha: str, hash_salvo: str) -> bool:

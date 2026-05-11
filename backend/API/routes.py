@@ -10,22 +10,28 @@ from typing import Annotated
 router = APIRouter(prefix="/cadastro", tags=["cadastro"])
 SessionDep= Annotated[Session, Depends(get_session)]
 
-@router.get(path='/login/{cfp_hash}', response_model=clienteGET,
-         responses={404: {'description': 'Livro não encontrado'}})
-async def login(cliente: clienteGET, session: SessionDep) -> bool:
-    if cliente_login := session.execute(select(cliente).where(cliente.cpf == cliente.)).scalar_one():
-        return LivroRespota.model_validate(livro)
-    raise HTTPException(status_code=404,detail='Livro não encontrado')
+@router.post(path='/login/', response_model=clienteGET,
+         responses={404: {'description': 'Usuario nao encotrado '}})
+async def login(cliente_login: clienteGET, session: SessionDep) -> clienteGET:
+    cpf_HASH = cpf_hash(cpf=cliente_login.cpf)
+
+    if cliente_valido := session.execute(select(cliente).where(cliente.cpf == cpf_HASH)).scalar_one():
+        if verificar_senha(senha=cliente_login.senha, hash_salvo=cliente_valido.senha):
+            return clienteGET.model_validate(cliente_valido)
+    raise HTTPException(status_code=404,detail='Usuario nao encontrado')
 
 
 @router.post('/cliente', response_model=clientePOST)
 async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -> clientePOST:
+    cpf_HASH = cpf_hash(cpf=cliente_cadastro.cpf)
+    senha_HASH = senha_hash(senha=cliente_cadastro.senha)
+
 
     cliente_novo = cliente(
         nome = cliente_cadastro.nome,
-        cpf = cliente_cadastro.cpf,
+        cpf = cpf_HASH,
         data_nascimento = cliente_cadastro.data_nascimento,
-        senha = cliente_cadastro.senha,
+        senha = senha_HASH,
         email = cliente_cadastro.email,
         numero_telefone_pessoal = cliente_cadastro.numero_telefone_pessoal,
         cep = cliente_cadastro.cep,
