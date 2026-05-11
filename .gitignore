@@ -67,6 +67,7 @@ venv.bak/
 # ============================================
 # Environment Variables & Secrets
 # ============================================
+backend/models/database_drop.py
 backend/API/.env
 .env.*
 .env.local

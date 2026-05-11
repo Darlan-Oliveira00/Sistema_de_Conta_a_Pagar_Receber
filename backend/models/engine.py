@@ -4,12 +4,11 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
-
 class Base(DeclarativeBase):
     pass
 
-class clinte(Base):
-    __tablename__ = 'clinte'
+class cliente(Base):
+    __tablename__ = 'cliente'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     nome: Mapped[str] = mapped_column(String(150))
@@ -18,20 +17,20 @@ class clinte(Base):
     data_nascimento: Mapped[datetime] = mapped_column(DateTime)
     email: Mapped[str] = mapped_column(String(100))
     numero_telefone_pessoal: Mapped[str] = mapped_column(String(11))
-    cep: Mapped[str] = mapped_column(String(9))
-    estado: Mapped[str] = mapped_column(String(2))
+    cep: Mapped[str] = mapped_column(String(30))
+    estado: Mapped[str] = mapped_column(String(30))
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-class clintePOST(BaseModel):
+class clientePOST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome: str
     cpf: str
     data_nascimento: datetime
     senha: str
     email: str
-    telefone: str
+    numero_telefone_pessoal: str
     cep: str
     estado: str
     cidade: str
