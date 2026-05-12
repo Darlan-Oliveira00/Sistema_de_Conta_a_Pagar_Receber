@@ -43,10 +43,12 @@ aside button.active {
 }
 
 /* Conteúdo principal */
-main {
+#section{
     flex: 1;
     padding: 20px;
-    background-color: #f5f5f5;
+    background-color: #E9ECEF;
+    height: 100%;
+    width: 100%;
 }
 
 main h1 {
@@ -58,3 +60,4 @@ main p {
     color: #666;
     line-height: 1.6;
 }
+

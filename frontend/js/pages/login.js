@@ -1,3 +1,4 @@
+// Retornar estrutura html
 function paginaLogin() {
     return `
     <div class="container">
@@ -23,7 +24,7 @@ function paginaLogin() {
                         <input type="text" name="usuario" id="usuario" placeholder="Digite seu CPF" maxlength="14">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="inputs-senha">
                         <label for="senha">Senha:</label>
                         <input type="password" name="senha" id="senha" placeholder="Digite sua senha">
                     </div>
@@ -33,7 +34,7 @@ function paginaLogin() {
                     </div>
                 </form>
 
-                <div id="logout">
+                <div id="cadastrar">
                     <p>Ainda não tem conta? <button type="button" onclick="abrirCadastroCliente()"><b>Cadastre-se cliente</b></button></p>
                     <p>Ainda não tem conta? <button type="button" onclick="abrirCadastroFornecedor()"><b>Cadastre-se fornecedor</b></button></p>
                 </div>
@@ -56,16 +57,15 @@ function mudarTipoUsuario() {
         inputUsuario.maxLength = '14';
     }
 
-    // Limpar o campo ao trocar de tipo
     inputUsuario.value = '';
 }
 
+// Faz a validação e autenticação dos dados e redireciona para a pagina layout
 async function fazerLogin() {
     const tipoUsuario = document.getElementById('tipoUsuario').value;
     const cpfCnpj = document.getElementById('usuario').value.replace(/\D/g, '');
     const senha = document.getElementById('senha').value;
 
-    // Validações
     if (!cpfCnpj || !senha) {
         alert('Preencha todos os campos');
         return;
@@ -82,7 +82,6 @@ async function fazerLogin() {
     }
 
     try {
-        // Escolher rota conforme tipo de usuário
         const rota = tipoUsuario === 'cliente' ? '/login_cliente' : '/login_fornecedor/';
 
         const response = await fetch(`${API_BASE_URL}${rota}`, {
@@ -91,28 +90,27 @@ async function fazerLogin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ 
-                cpf: cpfCnpj,  // Para cliente
-                cnpj: cpfCnpj,  // Para fornecedor
+                cpf: cpfCnpj,
+                cnpj: cpfCnpj,
                 senha 
             })
         });
 
         if (response.ok) {
-            // const usuario = await response.json();
-            console.log('Login bem-sucedido!', usuario);
+            console.log('Login bem-sucedido!');
 
-            // ✅ Salvar dados do usuário no localStorage
             localStorage.setItem('usuario', JSON.stringify(cpfCnpj));
             localStorage.setItem('tipoUsuario', tipoUsuario);
 
             renderizarLayout();
         } else if (response.status === 404) {
             const erro = await response.json();
-            alert('Erro: ' + erro.detail);
-            console.error('Usuário não encontrado');
+            alert('Usuario não encontrado');
+            console.error('Erro: ' + erro.detail);
         } else if (response.status === 401) {
             const erro = await response.json();
-            alert('Erro: ' + erro.detail);
+            alert('Senha incorreta')
+            console.log('Erro: ' + erro.detail)
         } else {
             alert('Erro ao fazer login');
             console.error('Falha no login');
@@ -123,10 +121,12 @@ async function fazerLogin() {
     }
 }
 
+// Redireciona para a pagina de Cadastro de Cliente
 function abrirCadastroCliente() {
     renderizarPagina('cadastroCliente');
 }
 
+// Redireciona para a pagina de Cadastro de Fornecedor
 function abrirCadastroFornecedor(){
     renderizarPagina('cadastroFornecedor');
 }

@@ -75,6 +75,10 @@ function paginaCadastroCliente(){
 
       </form>
 
+      <div class="footer-login">
+        <p>Ja tem conta? <button id="tela-login" onclick="renderizarPagina('login')">Fazer login</button></p>
+        </div>
+
     </div>
     `
 }
@@ -135,6 +139,10 @@ async function cadastrarCliente() {
             alert('Cadastro realizado com sucesso!');
             console.log('Cliente cadastrado:', cliente);
             renderizarPagina('login');
+        }else if(response.status === 409){
+            const erro = await response.json();
+            alert('Usuario já possui cadastrado');
+            console.log('Erro: ' + erro.detail);
         } else {
             const erro = await response.json();
             alert('Erro ao cadastrar: ' + (erro.detail || 'Tente novamente'));

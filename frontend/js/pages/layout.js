@@ -11,9 +11,7 @@ function paginaLayout() {
             </ul>
         </aside>
 
-        <main>
-            <div id="section">
-            </div>
+        <main id="section">
         </main>
     `;
 }

@@ -16,6 +16,12 @@ function renderizarPagina(pagina) {
             app.innerHTML = paginaCadastroCliente();
             adicionarEventoCEP();
             break;
+        case 'cadastroDespesa':
+            app.innerHTML = paginaCadastroDespesa();
+            break;
+        case 'cadastroReceita':
+            app.innerHTML = paginaCadastroReceita();
+            break;
         case 'layout':
             renderizarLayout();
             break;

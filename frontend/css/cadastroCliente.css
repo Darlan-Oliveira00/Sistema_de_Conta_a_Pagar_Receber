@@ -64,23 +64,10 @@
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
+    margin-bottom: 20px;
 }
 
 #btn-cadastrar:hover {
     background-color: #e0a800;
     transform: scale(1.02);
-}
-
-@media (max-width: 700px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .card h1 {
-        font-size: 30px;
-    }
-
-    button {
-        width: 100%;
-    }
 }
