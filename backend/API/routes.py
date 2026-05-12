@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 import traceback
 from datetime import datetime
-
 from backend.API.validações import validacao_cnpj
 from backend.models.database import get_session
 from backend.API.criptografia import *
