@@ -10,19 +10,23 @@ from typing import Annotated
 
 
 router = APIRouter(tags=["cadastro e login"])
-SessionDep= Annotated[Session, Depends(get_session)]
+SessionDep = Annotated[Session, Depends(get_session)]
+
 
 @router.post(path='/login_cliente', response_model=clienteGET,
-         responses={404: {'description': 'Usuario nao encotrado '}})
-async def login(cliente_login: clienteGET, session: SessionDep) -> clienteGET:
+             responses={404: {'description': 'Usuario nao encontrado'}})
+async def login_cliente(cliente_login: clienteGET, session: SessionDep) -> clienteGET:
     cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cliente_login.cpf)
-
-    if cliente_valido := session.execute(select(cliente).where(cliente.cpf == cpf_HASH)).all():
-        cliente_valido = session.execute(select(cliente).where(cliente.cpf == cpf_HASH)).scalar_one()
+    
+    cliente_valido = session.execute(
+        select(cliente).where(cliente.cpf == cpf_HASH)
+    ).scalar_one_or_none()
+    
+    if cliente_valido:
         if verificar_senha(senha=cliente_login.senha, hash_salvo=cliente_valido.senha):
             return clienteGET.model_validate(cliente_valido)
-        raise  HTTPException(status_code=401, detail="Senha incorreta")
-    raise HTTPException(status_code=404,detail='Usuario nao encontrado')
+        raise HTTPException(status_code=401, detail="Senha incorreta")
+    raise HTTPException(status_code=404, detail='Usuario nao encontrado')
 
 
 @router.post('/cliente', response_model=clientePOST)
@@ -30,20 +34,23 @@ async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -
     cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cliente_cadastro.cpf)
     senha_HASH = senha_hash(senha=cliente_cadastro.senha)
 
-    if [] == (cliente_existe := session.execute(select(cliente).where(cliente.cpf == cpf_HASH)).all()):
-
+    cliente_existe = session.execute(
+        select(cliente).where(cliente.cpf == cpf_HASH)
+    ).scalar_one_or_none()
+    
+    if cliente_existe is None:
         cliente_novo = cliente(
-            nome = cliente_cadastro.nome,
-            cpf = cpf_HASH,
-            data_nascimento = cliente_cadastro.data_nascimento,
-            senha = senha_HASH,
-            email = cliente_cadastro.email,
-            numero_telefone_pessoal = cliente_cadastro.numero_telefone_pessoal,
-            cep = cliente_cadastro.cep,
-            estado = cliente_cadastro.estado,
-            cidade = cliente_cadastro.cidade,
-            bairro = cliente_cadastro.bairro,
-            logradouro = cliente_cadastro.logradouro,
+            nome=cliente_cadastro.nome,
+            cpf=cpf_HASH,
+            data_nascimento=cliente_cadastro.data_nascimento,
+            senha=senha_HASH,
+            email=cliente_cadastro.email,
+            numero_telefone_pessoal=cliente_cadastro.numero_telefone_pessoal,
+            cep=cliente_cadastro.cep,
+            estado=cliente_cadastro.estado,
+            cidade=cliente_cadastro.cidade,
+            bairro=cliente_cadastro.bairro,
+            logradouro=cliente_cadastro.logradouro,
         )
 
         session.add(cliente_novo)
@@ -53,75 +60,67 @@ async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -
         return clientePOST.model_validate(cliente_novo)
     raise HTTPException(status_code=409, detail='Usuario ja existe no banco de dados')
 
-@router.post(path='/login_fornecedor/', response_model= fornecedorGET,
-         responses={404: {'description': 'Usuario nao encotrado '}})
-async def login(fornecedor_login: fornecedorGET, session: SessionDep) -> fornecedorPOST:
+
+@router.post(path='/login_fornecedor', response_model=fornecedorGET,
+             responses={404: {'description': 'Usuario nao encontrado'}})
+async def login_fornecedor(fornecedor_login: fornecedorGET, session: SessionDep) -> fornecedorGET:
     cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=fornecedor_login.cnpj)
 
-    if fornecedor_valido := session.execute(select(fornecedor).where(fornecedor.cnpj == cnpj_HASH)).all():
-        fornecedor_valido = session.execute(select(fornecedor).where(fornecedor.cnpj == cnpj_HASH)).scalar_one()
+    fornecedor_valido = session.execute(
+        select(fornecedor).where(fornecedor.cnpj == cnpj_HASH)
+    ).scalar_one_or_none()
+    
+    if fornecedor_valido:
         if verificar_senha(senha=fornecedor_login.senha, hash_salvo=fornecedor_valido.senha):
-            return fornecedorPOST.model_validate(fornecedor_valido)
-        raise  HTTPException(status_code=401, detail="Senha incorreta")
-    raise HTTPException(status_code=404,detail='Usuario nao encontrado')
+            return fornecedorGET.model_validate(fornecedor_valido)
+        raise HTTPException(status_code=401, detail="Senha incorreta")
+    raise HTTPException(status_code=404, detail='Usuario nao encontrado')
 
 
 @router.post('/fornecedor', response_model=fornecedorPOST)
 async def cadastro_fornecedor(fornecedor_cadastro: fornecedorREQUEST, session: SessionDep) -> fornecedorPOST:
-    fornecedor_valido = validacao_cnpj(fornecedor_cadastro.cnpj, fornecedor_cadastro.nome_oficial_empresa)
+    
+    fornecedor_dados = validacao_cnpj(
+        cnpj=fornecedor_cadastro.cnpj, 
+        nome_oficial_empresa=fornecedor_cadastro.nome_oficial_empresa
+    )
+
     cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=fornecedor_cadastro.cnpj)
+    fornecedor_existe = session.execute(
+        select(fornecedor).where(fornecedor.cnpj == cnpj_HASH)
+    ).scalar_one_or_none()
+    
+    if fornecedor_existe is not None:
+        raise HTTPException(status_code=409, detail='Usuario ja existe no banco de dados')
+
     senha_HASH = senha_hash(senha=fornecedor_cadastro.senha)
 
-    if [] == (fornecedor_existe := session.execute(select(fornecedor).where(fornecedor.cnpj == cnpj_HASH)).all()):
-        fornecedor_novo = fornecedor(
-            cnpj=cnpj_HASH,
-            senha=senha_HASH,
-            nome_oficial_empresa=fornecedor_cadastro.nome_oficial_empresa,
-            nome_cormecial_empresa=fornecedor_valido['nome_cormecial_empresa'],
-            situacao_cadastral=fornecedor_valido['situacao_cadastral'],
-            data_abertura=fornecedor_valido['data_abertura'],
-            natureza_juridica=fornecedor_valido['natureza_juridica'],
-            cnae=fornecedor_valido['cnae'],
-            capital_social=fornecedor_valido['capital_social'],
-            porte_empresa= fornecedor_valido['porte_empresa'],
-            email=fornecedor_cadastro.email,
-            numero_telefone_empresa=fornecedor_cadastro.numero_telefone_empresa,
-            cep=fornecedor_valido['cep'],
-            uf=fornecedor_valido['uf'],
-            cidade=fornecedor_valido['cidade'],
-            bairro=fornecedor_valido['bairro'],
-            logradouro=fornecedor_valido['logradouro'],
-        )
+    fornecedor_novo = fornecedor(
+        cnpj=cnpj_HASH,
+        senha=senha_HASH,
+        nome_oficial_empresa=fornecedor_dados['nome_oficial_empresa'],
+        nome_cormecial_empresa=fornecedor_dados['nome_cormecial_empresa'],
+        situacao_cadastral=fornecedor_dados['situacao_cadastral'],
+        data_abertura=fornecedor_dados['data_abertura'],
+        natureza_juridica=fornecedor_dados['natureza_juridica'],
+        cnae=fornecedor_dados['cnae'],
+        capital_social=fornecedor_dados['capital_social'],
+        porte_empresa=fornecedor_dados['porte_empresa'],
+        email=fornecedor_cadastro.email,
+        numero_telefone_empresa=fornecedor_cadastro.numero_telefone_empresa,
+        cep=fornecedor_dados['cep'],
+        uf=fornecedor_dados['uf'],
+        cidade=fornecedor_dados['cidade'],
+        bairro=fornecedor_dados['bairro'],
+        logradouro=fornecedor_dados['logradouro'],
+    )
 
+    try:
         session.add(fornecedor_novo)
         session.commit()
         session.refresh(fornecedor_novo)
-
         return fornecedorPOST.model_validate(fornecedor_novo)
-    raise HTTPException(status_code=409, detail='Usuario ja existe no banco de dados')
-'''
-@router.post('/produto_servico', response_model=produto_servicoPOST)
-async def cadastro_cliente(produto_servico_cadastro: produto_servicoPOST, session: SessionDep) -> produto_servicoPOST:
-
-    if [] == (cliente_existe := session.execute(select(produto_servico).where(produto_servico.uuid == )).all()):
-
-        cliente_novo = cliente(
-            nome = cliente_cadastro.nome,
-            cpf = cpf_HASH,
-            data_nascimento = cliente_cadastro.data_nascimento,
-            senha = senha_HASH,
-            email = cliente_cadastro.email,
-            numero_telefone_pessoal = cliente_cadastro.numero_telefone_pessoal,
-            cep = cliente_cadastro.cep,
-            estado = cliente_cadastro.estado,
-            cidade = cliente_cadastro.cidade,
-            bairro = cliente_cadastro.bairro,
-            logradouro = cliente_cadastro.logradouro,
-        )
-
-        session.add(cliente_novo)
-        session.commit()
-        session.refresh(cliente_novo)
-
-        return clientePOST.model_validate(cliente_novo)
-    raise HTTPException(status_code=409, detail='Usuario ja existe no banco de dados')'''
+    except Exception as e:
+        session.rollback()
+        print(f"Erro ao salvar fornecedor: {e}")
+        raise HTTPException(status_code=500, detail='Erro ao cadastrar fornecedor no banco de dados')
