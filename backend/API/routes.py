@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
+
+from backend.API.validações import validacao_cnpj
 from backend.models.database import get_session
 from backend.API.criptografia import *
 from backend.models.engine import *
@@ -65,7 +67,8 @@ async def login(fornecedor_login: fornecedorGET, session: SessionDep) -> fornece
 
 
 @router.post('/fornecedor', response_model=fornecedorPOST)
-async def cadastro_fornecedor(fornecedor_cadastro: fornecedorPOST, session: SessionDep) -> fornecedorPOST:
+async def cadastro_fornecedor(fornecedor_cadastro: fornecedorREQUEST, session: SessionDep) -> fornecedorPOST:
+    fornecedor_valido = validacao_cnpj(fornecedor_cadastro.cnpj, fornecedor_cadastro.nome_oficial_empresa)
     cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=fornecedor_cadastro.cnpj)
     senha_HASH = senha_hash(senha=fornecedor_cadastro.senha)
 
@@ -74,20 +77,20 @@ async def cadastro_fornecedor(fornecedor_cadastro: fornecedorPOST, session: Sess
             cnpj=cnpj_HASH,
             senha=senha_HASH,
             nome_oficial_empresa=fornecedor_cadastro.nome_oficial_empresa,
-            nome_cormecial_empresa=fornecedor_cadastro.nome_cormecial_empresa,
-            situacao_cadastral=fornecedor_cadastro.situacao_cadastral,
-            data_abertura=fornecedor_cadastro.data_abertura,
-            natureza_juridica=fornecedor_cadastro.natureza_juridica,
-            cnae=fornecedor_cadastro.cnae,
-            capital_social=fornecedor_cadastro.capital_social,
-            porte_empresa= fornecedor_cadastro.porte_empresa,
+            nome_cormecial_empresa=fornecedor_valido['nome_cormecial_empresa'],
+            situacao_cadastral=fornecedor_valido['situacao_cadastral'],
+            data_abertura=fornecedor_valido['data_abertura'],
+            natureza_juridica=fornecedor_valido['natureza_juridica'],
+            cnae=fornecedor_valido['cnae'],
+            capital_social=fornecedor_valido['capital_social'],
+            porte_empresa= fornecedor_valido['porte_empresa'],
             email=fornecedor_cadastro.email,
             numero_telefone_empresa=fornecedor_cadastro.numero_telefone_empresa,
-            cep=fornecedor_cadastro.cep,
-            uf=fornecedor_cadastro.uf,
-            cidade=fornecedor_cadastro.cidade,
-            bairro=fornecedor_cadastro.bairro,
-            logradouro=fornecedor_cadastro.logradouro,
+            cep=fornecedor_valido['cep'],
+            uf=fornecedor_valido['uf'],
+            cidade=fornecedor_valido['cidade'],
+            bairro=fornecedor_valido['bairro'],
+            logradouro=fornecedor_valido['logradouro'],
         )
 
         session.add(fornecedor_novo)
@@ -96,3 +99,29 @@ async def cadastro_fornecedor(fornecedor_cadastro: fornecedorPOST, session: Sess
 
         return fornecedorPOST.model_validate(fornecedor_novo)
     raise HTTPException(status_code=409, detail='Usuario ja existe no banco de dados')
+'''
+@router.post('/produto_servico', response_model=produto_servicoPOST)
+async def cadastro_cliente(produto_servico_cadastro: produto_servicoPOST, session: SessionDep) -> produto_servicoPOST:
+
+    if [] == (cliente_existe := session.execute(select(produto_servico).where(produto_servico.uuid == )).all()):
+
+        cliente_novo = cliente(
+            nome = cliente_cadastro.nome,
+            cpf = cpf_HASH,
+            data_nascimento = cliente_cadastro.data_nascimento,
+            senha = senha_HASH,
+            email = cliente_cadastro.email,
+            numero_telefone_pessoal = cliente_cadastro.numero_telefone_pessoal,
+            cep = cliente_cadastro.cep,
+            estado = cliente_cadastro.estado,
+            cidade = cliente_cadastro.cidade,
+            bairro = cliente_cadastro.bairro,
+            logradouro = cliente_cadastro.logradouro,
+        )
+
+        session.add(cliente_novo)
+        session.commit()
+        session.refresh(cliente_novo)
+
+        return clientePOST.model_validate(cliente_novo)
+    raise HTTPException(status_code=409, detail='Usuario ja existe no banco de dados')'''
