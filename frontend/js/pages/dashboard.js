@@ -1,18 +1,11 @@
 // Exemplo em qualquer página
 function paginaDashboard() {
-    // const cliente = obterClienteLogado();
-    // const nome = cliente ? cliente.nome : 'Visitante';
+    const cliente = obterClienteLogado();
+    const nome = cliente ? cliente.nome : 'Visitante';
 
-    // return `
-    // <div class="dashboard">
-    //     <h1>Bem-vindo, ${nome}!</h1>
-    //     <p>CPF: ${cliente}</p>
-        
-    // </div>
-    // `
-    return`
+    return `
         <div class="content-dashboard">
-
+                <h1>Bem-vindo, ${nome}!</h1>
       <div class="cards">
 
         <div class="card">
@@ -58,7 +51,5 @@ function paginaDashboard() {
       </div>
 
     </div>
-    `
-    
-    ;
+    `;
 }
