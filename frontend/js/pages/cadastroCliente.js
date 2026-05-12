@@ -75,6 +75,10 @@ function paginaCadastroCliente(){
 
       </form>
 
+      <div class="footer-login">
+        <p>Ja tem conta? <button id="tela-login" onclick="renderizarPagina('login')">Fazer login</button></p>
+        </div>
+
     </div>
     `
 }
