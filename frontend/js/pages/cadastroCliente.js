@@ -139,6 +139,10 @@ async function cadastrarCliente() {
             alert('Cadastro realizado com sucesso!');
             console.log('Cliente cadastrado:', cliente);
             renderizarPagina('login');
+        }else if(response.status === 409){
+            const erro = await response.json();
+            alert('Usuario já possui cadastrado');
+            console.log('Erro: ' + erro.detail);
         } else {
             const erro = await response.json();
             alert('Erro ao cadastrar: ' + (erro.detail || 'Tente novamente'));
