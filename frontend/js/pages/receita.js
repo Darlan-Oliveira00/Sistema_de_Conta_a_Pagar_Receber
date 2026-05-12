@@ -4,7 +4,7 @@ function paginaReceitas(){
                 <h1>Contas a Receber</h1>
 
                 <div class="top-bar">
-                    <button class="btn-cadastrar-receita" id="cadastrar-receita">Cadastrar Receita</button>
+                    <button class="btn-cadastrar-receita" id="cadastrar-receita" onclick="renderizarPagina('cadastroReceita')">Cadastrar Receita</button>
 
                     <input
                         type="text"
