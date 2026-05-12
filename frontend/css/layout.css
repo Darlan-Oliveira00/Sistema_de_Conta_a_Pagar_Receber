@@ -58,3 +58,8 @@ main p {
     color: #666;
     line-height: 1.6;
 }
+
+#section{
+    height: 100%;
+    width: 100%;
+}
