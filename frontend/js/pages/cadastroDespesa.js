@@ -37,6 +37,10 @@ function paginaCadastroDespesa(){
         <button type="submit">Cadastrar</button>
       </div>
     </form>
+
+    <div id="footer-cadastroDespesa">
+      <button onclick="renderizarPagina('layout')" class="btn-voltar">Voltar para dashboard</button>
+    </div>
   </div>
     `
 }
