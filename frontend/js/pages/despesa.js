@@ -4,7 +4,7 @@ function paginaDespesas(){
                 <h1>Contas a Pagar</h1>
 
                 <div class="top-bar">
-                    <button class="btn-cadastrar-despesa" id="cadastrar-despesa">Cadastrar Despesa</button>
+                    <button class="btn-cadastrar-despesa" id="cadastrar-despesa" onclick="renderizarPagina('cadastroDespesa')">Cadastrar Despesa</button>
 
                     <input
                         type="text"
