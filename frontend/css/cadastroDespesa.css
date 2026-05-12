@@ -28,17 +28,17 @@
   flex: 1;
 }
 
-label {
+.container-despesa label {
   font-size: 14px;
   font-weight: bold;
   color: #333;
   margin-bottom: 3px;
 }
 
-input,
+.container-despesa input,
 select {
   width: 100%;
-  padding: 5px 12px;
+  padding: 3px 12px;
   border: 1px solid #777;
   border-radius: 5px;
   background: #dcdcdc;
@@ -58,7 +58,7 @@ select {
   padding-bottom: 30px;
 }
 
-.btn-area button {
+.container-despesa .btn-area button {
   width: 210px;
   padding: 14px;
   border: none;
@@ -71,7 +71,7 @@ select {
   transition: 0.3s;
 }
 
-.btn-area button:hover {
+.container-despesa .btn-area button:hover {
   background: #e6b400;
 }
 
