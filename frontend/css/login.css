@@ -99,7 +99,11 @@
     border: none;
 }
 
-#logout button{
+#cadastrar{
+    font-size: 14px;
+}
+
+#cadastrar button{
     border: none;
     color: #FF383C;
     background-color: #FFFFFF;
