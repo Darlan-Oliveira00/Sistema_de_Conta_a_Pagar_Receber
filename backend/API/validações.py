@@ -9,6 +9,7 @@ from datetime import datetime
 load_dotenv()
 
 token = os.getenv('chave_api_cpf')
+
 def validacao_cpf(cpf, nome_completo, data_nascimento):
     url_base = f'https://api.cpfhub.io/cpf/{cpf}'
 
@@ -37,7 +38,6 @@ def validacao_cpf(cpf, nome_completo, data_nascimento):
 
 
 def validacao_cnpj(cnpj,nome_oficial_empresa ):
-    cnpj = ''.join(re.sub(r'\W', '', cnpj))
     url_base = f'https://brasilapi.com.br/api/cnpj/v1/{cnpj}'
 
     response = requests.get(url=url_base)
@@ -70,6 +70,11 @@ def validacao_cnpj(cnpj,nome_oficial_empresa ):
 def remover_acentos(texto):
     return unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('ascii')
 
+def normalidado_cpf(cpf) -> str:
+    return ''.join(re.sub(r'\W', '', cpf))
+
+def normalidado_cnpj(cnpj) -> str:
+    return ''.join(re.sub(r'\W', '', cnpj))
 
 if __name__ == '__main__':
     resposta = validacao_cnpj('34.028.316/0001-03', 'Empresa Brasileira de Correios e Telégrafos ')
