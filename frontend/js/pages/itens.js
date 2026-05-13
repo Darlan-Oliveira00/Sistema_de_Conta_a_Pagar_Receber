@@ -4,7 +4,7 @@ function paginaItens(){
                 <h1>Itens</h1>
 
                 <div class="top-bar">
-                    <button class="btn-cadastrar-itens" id="cadastrar-itens" onclick="renderizarPagina('')">Cadastrar Itens</button>
+                    <button class="btn-cadastrar-itens" id="cadastrar-itens" onclick="renderizarPagina('cadastroItens')">Cadastrar Itens</button>
 
                     <input
                         type="text"

@@ -22,6 +22,9 @@ function renderizarPagina(pagina) {
         case 'cadastroReceita':
             app.innerHTML = paginaCadastroReceita();
             break;
+        case 'cadastroItens':
+            app.innerHTML = paginaCadastroItens();
+            break;
         case 'layout':
             app.innerHTML = paginaLayout();
             setupLayout();
