@@ -1,4 +1,3 @@
-// Exemplo em qualquer página
 function paginaDashboard() {
     const nome = obterNomeUsuario();
 
