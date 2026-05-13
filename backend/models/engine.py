@@ -16,7 +16,7 @@ class cliente(Base):
     nome: Mapped[str] = mapped_column(String(150))
     cpf: Mapped[str] = mapped_column(String(150), unique=True, index=True)
     senha: Mapped[str] = mapped_column(String(150), index=True)
-    data_nascimento: Mapped[datetime] = mapped_column(DateTime)
+    data_nascimento: Mapped[str] = mapped_column(String(15))
     email: Mapped[str] = mapped_column(String(100))
     numero_telefone_pessoal: Mapped[str] = mapped_column(String(11))
     cep: Mapped[str] = mapped_column(String(30))
@@ -29,7 +29,7 @@ class clientePOST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome: str
     cpf: str
-    data_nascimento: datetime
+    data_nascimento: str
     senha: str
     email: str
     numero_telefone_pessoal: str
@@ -57,7 +57,7 @@ class fornecedor(Base):
     nome_oficial_empresa: Mapped[str] = mapped_column(String(150))
     nome_cormecial_empresa: Mapped[str] = mapped_column(String(150))
     situacao_cadastral: Mapped[str] = mapped_column(String(20))
-    data_abertura: Mapped[datetime] = mapped_column(DateTime)
+    data_abertura: Mapped[str] = mapped_column(String(20))
     natureza_juridica: Mapped[str] = mapped_column(String(150))
     cnae: Mapped[str] = mapped_column(String(150)) # Atividade econômica
     capital_social: Mapped[float] = mapped_column(Float)

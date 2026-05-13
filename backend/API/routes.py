@@ -31,13 +31,12 @@ async def login_cliente(cliente_login: clienteLOGIN, session: SessionDep) -> cli
 
 @router.post('/cliente', response_model=clientePOST)
 async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -> HTTPException | clientePOST:
-    print(cliente_cadastro.cpf)
     cliente_valido = validacao_cpf(cpf=cliente_cadastro.cpf,
                                      nome_completo=cliente_cadastro.nome,
                                      data_nascimento=cliente_cadastro.data_nascimento,)
 
-    if cliente_valido == int:
-        return HTTPException(status_code=404, detail='erro na validação de cliente')
+    if cliente_valido != 200:
+        raise HTTPException(status_code=400, detail='Erro na validação do CPF')
 
     cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cliente_cadastro.cpf)
     senha_HASH = senha_hash(senha=cliente_cadastro.senha)
