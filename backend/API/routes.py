@@ -153,7 +153,7 @@ async def cadastro_produto_servico(produto_servico_cliente_cadastro: produto_ser
 
     novo_uuid =  uuid4()
 
-    produto_servico = produto_servico_cliente(
+    produto_servico_novo = produto_servico_cliente(
         produto_servico_cliente_uuid = novo_uuid,
         classificacao_produto_servico = produto_servico_cliente_cadastro.classificacao_produto_servico,
         nome_produto_servico = produto_servico_cliente_cadastro.nome_produto_servico,
@@ -167,12 +167,47 @@ async def cadastro_produto_servico(produto_servico_cliente_cadastro: produto_ser
         margem_de_lucro_produto_servico = marga_de_lucro,
     )
 
-    session.add(produto_servico)
+    session.add(produto_servico_novo)
     session.commit()
-    session.refresh(produto_servico)
+    session.refresh(produto_servico_novo)
 
-    return produto_servico_cliente_Response.model_validate(produto_servico)
+    return produto_servico_cliente_Response.model_validate(produto_servico_novo)
 
+@router.post('/produto_servico_fornecedor', response_model=produto_servico_fornecedor_Response)
+async def cadastro_produto_servico(produto_servico_fornecedor_cadastro: produto_servico_fornecedor_REQUEST,
+                                   session: SessionDep) -> produto_servico_fornecedor_Response | HTTPException:
+    cnpj = normalidado_cpf(produto_servico_fornecedor_cadastro.cnpj)
+    cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=cnpj)
+
+
+    imcs = lambda x: x * 0.18
+    valor_com_imcs = float(imcs(produto_servico_fornecedor_cadastro.valor_final_de_venda_produto_servico))
+    margem = (lambda x,y, z: x - (y + z) )
+    marga_de_lucro = float(margem(produto_servico_fornecedor_cadastro.valor_final_de_venda_produto_servico,
+                            produto_servico_fornecedor_cadastro.valor_custo_produto_servico,
+                            valor_com_imcs))
+
+    novo_uuid = uuid4()
+
+    produto_servico_novo = produto_servico_fornecedor(
+        uuid = novo_uuid,
+        classificacao_produto_servico = produto_servico_fornecedor_cadastro.classificacao_produto_servico,
+        nome_produto_servico = produto_servico_fornecedor_cadastro.nome_produto_servico,
+        cnpj_vendendor = cnpj_HASH,
+        detalhes_produto_servico = produto_servico_fornecedor_cadastro.detalhes_produto_servico,
+        data_do_cadastro_produto_servico = datetime.strptime(datetime.today().strftime('%Y-%m-%d'), '%Y-%m-%d'),
+        valor_custo_produto_servico = produto_servico_fornecedor_cadastro.valor_custo_produto_servico,
+        ICMS_do_produto_servico = "18%",
+        valor_com_IMCS_produto_servico = valor_com_imcs,
+        valor_final_de_venda_produto_servico = produto_servico_fornecedor_cadastro.valor_final_de_venda_produto_servico,
+        margem_de_lucro_produto_servico = marga_de_lucro,
+    )
+
+    session.add(produto_servico_novo)
+    session.commit()
+    session.refresh(produto_servico_novo)
+
+    return produto_servico_fornecedor_Response.model_validate(produto_servico_novo)
 
 '''
 @router.post('/produto_servico', response_model=produto_servicoPOST)
@@ -199,4 +234,20 @@ async def cadastro_cliente(produto_servico_cadastro: produto_servicoPOST, sessio
         session.refresh(cliente_novo)
 
         return clientePOST.model_validate(cliente_novo)
-    raise HTTPException(status_code=409, detail='Usuario ja existe no banco de dados')'''
+    raise HTTPException(status_code=409, detail='Usuario ja existe no banco de dados')
+
+@router.post('/despesas', response_model=despesasPOST)
+async def cadastro_despesas(fornecedor_cadastro_despesas: despesasPOST, session: SessionDep) -> despesasPOST:
+        despesas_novo = fornecedor(
+            cpf_cnpj_recebedor=fornecedor_cadastro_despesas.cpf_cnpj_recebedor,
+            cpf_cnpj_pagador=fornecedor_cadastro_despesas.cpf_cnpj_pagador,
+            data_evento=fornecedor_cadastro_despesas.data_evento,
+            tipo_de_despesas=fornecedor_cadastro_despesas.tipo_de_despesas,
+            data_evento=fornecedor_cadastro_despesas.data_de_evento,
+        )
+
+        session.add(despesas_novo)
+        session.commit()
+        session.refresh(despesas_novo)
+
+        return despesasPOST.model_validate(despesas_novo)'''

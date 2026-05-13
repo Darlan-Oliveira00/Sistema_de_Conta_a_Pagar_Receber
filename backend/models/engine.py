@@ -25,9 +25,7 @@ class cliente(Base):
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-    produtos: Mapped[list['produto_servico_cliente']] = relationship(
-        back_populates="cliente"
-    )
+    produtos_cliente: Mapped[list['produto_servico_cliente']] = relationship(back_populates="cliente")
 
 class clientePOST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -73,6 +71,8 @@ class fornecedor(Base):
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
+
+    produtos_fornecedor: Mapped[list['produto_servico_fornecedor']] = relationship(back_populates='fornecedor')
 
 class fornecedorREQUEST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -129,8 +129,7 @@ class produto_servico_cliente(Base):
     valor_final_de_venda_produto_servico: Mapped[float] = mapped_column(Float)
     margem_de_lucro_produto_servico: Mapped[float] = mapped_column(Float)
 
-    cliente: Mapped['cliente'] = relationship(back_populates="produtos")
-
+    cliente: Mapped['cliente'] = relationship(back_populates="produtos_cliente")
 
 class produto_servico_cliente_REQUEST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -141,11 +140,9 @@ class produto_servico_cliente_REQUEST(BaseModel):
     valor_custo_de_venda_produto_servico: float
     valor_final_de_venda_produto_servico: float
 
-class produto_servico_cliente_POST(produto_servico_cliente_REQUEST):
-        uuid: UUID
-
 class produto_servico_cliente_Response(BaseModel):
     model_config = ConfigDict(from_attributes=True)
+    nome_produto_servico: str
     classificacao_produto_servico: str
     detalhes_produto_servico: str
     data_do_cadastro_produto_servico: str
@@ -156,12 +153,13 @@ class produto_servico_cliente_Response(BaseModel):
     margem_de_lucro_produto_servico: float
 
 class produto_servico_fornecedor(Base):
-    __tablename__ = 'produtos_servico_produto'
+    __tablename__ = 'produto_servico_fornecedor'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
     classificacao_produto_servico: Mapped[str] = mapped_column(String(50))
-    cpf_vendendor: Mapped[str] = mapped_column(ForeignKey('fornecedor.cnpj'), index=True)
+    cnpj_vendendor: Mapped[str] = mapped_column(String(100),ForeignKey('fornecedor.cnpj'), index=True)
+    nome_produto_servico: Mapped[str] = mapped_column(String(150))
     detalhes_produto_servico: Mapped[str] = mapped_column(String(150))
     data_do_cadastro_produto_servico: Mapped[str] = mapped_column(String(30))
     valor_custo_produto_servico: Mapped[float] = mapped_column(Float)
@@ -170,10 +168,56 @@ class produto_servico_fornecedor(Base):
     valor_final_de_venda_produto_servico: Mapped[float] = mapped_column(Float)
     margem_de_lucro_produto_servico: Mapped[float] = mapped_column(Float)
 
-    class produto_servico_fornecedor_REQUEST(BaseModel):
+    fornecedor: Mapped['fornecedor'] = relationship(back_populates='produtos_fornecedor')
+
+class produto_servico_fornecedor_REQUEST(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    cnpj: str
+    classificacao_produto_servico: str
+    nome_produto_servico: str
+    detalhes_produto_servico: str
+    valor_custo_produto_servico: float
+    valor_final_de_venda_produto_servico: float
+
+class produto_servico_fornecedor_Response(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_produto_servico: str
+    classificacao_produto_servico: str
+    detalhes_produto_servico: str
+    data_do_cadastro_produto_servico: str
+    valor_custo_produto_servico: float
+    ICMS_do_produto_servico: str
+    valor_com_IMCS_produto_servico: float
+    valor_final_de_venda_produto_servico: float
+    margem_de_lucro_produto_servico: float
+
+
+class despesas_cliente(Base):
+    __tablename__ = 'despesas'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
+    cpf_pagado: Mapped[str ] = mapped_column(ForeignKey('cliente.cpf'), index=True)
+    cpf_recebedor: Mapped[str | None] = mapped_column(ForeignKey('cliente.cpf'), index=True)
+    cnpj_recebedor: Mapped[str | None ] = mapped_column(ForeignKey('fornecedor.cnpj'), index=True)
+    valor_despesas: Mapped[float] = mapped_column(Float)
+    data_evento: Mapped[str]= mapped_column(String(30))
+    descricao: Mapped[str] = mapped_column(String)
+
+
+
+    class despesasRESQUEST(BaseModel):
         model_config = ConfigDict(from_attributes=True)
-        cnpj: str
-        classificacao_produto_servico: str
-        detalhes_produto_servico: str
-        valor_custo_produto_servico: float
-        valor_final_de_venda_produto_servico: float
+        cpf_pagador: str
+        cnpj_recebedor: str | None
+        cpf_recebedor: str | None
+        tipo_de_despesas: str
+        valor_despesas: float
+        data_evento: str
+
+    class despesasResponse(BaseModel):
+        model_config = ConfigDict(from_attributes=True)
+        cpf_pagador: str | None
+        cnpj_pagador : str | None
+        tipo_de_despesas: str
+        valor_despesas: float
+        data_evento: str
