@@ -6,6 +6,7 @@ function paginaLayout() {
                 <li><button id="btn-dashboard" onclick="renderizarSection('dashboard', event)">Dashboard</button></li>
                 <li><button id="btn-receitas" onclick="renderizarSection('receitas', event)">Cadastro de Receitas</button></li>
                 <li><button id="btn-despesas" onclick="renderizarSection('despesas', event)">Cadastro de Despesas</button></li>
+                <li><button id="btn-despesas" onclick="renderizarSection('itens', event)">Cadastro de Itens</button></li>
                 <li><button id="btn-relatorio" onclick="renderizarSection('relatorio', event)">Relatorio</button></li>
                 <li><button id="btn-sair" onclick="renderizarSection('sair', event)">Sair</button></li>
             </ul>
@@ -47,6 +48,9 @@ function renderizarSection(pagina, evento) {
             break;
         case 'relatorio':
             section.innerHTML = paginaRelatorio();
+            break;
+        case 'itens':
+            section.innerHTML = paginaItens();
             break;
         case 'sair':
             logout();
