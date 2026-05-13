@@ -10,12 +10,13 @@ function paginaReceitas(){
                         type="text"
                         placeholder="Buscar Receita"
                         class="search"
+                        id="buscar-receita"
+                        onkeyup="pesquisarReceita()"
                     >
                 </div>
 
-                <!-- TABELA -->
                 <div class="table-container">
-                    <table>
+                    <table id="tabela-receitas">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -71,4 +72,26 @@ function paginaReceitas(){
                 </div>
             </div>
     `
+}
+
+function pesquisarReceita() {
+    const input = document.getElementById('buscar-receita');
+    const filtro = input.value.toUpperCase();
+    const tabela = document.getElementById('tabela-receitas');
+    const linhas = tabela.querySelectorAll('tbody tr');
+
+    for (let i = 0; i < linhas.length; i++) {
+        const nome = linhas[i].getElementsByTagName('td')[0].textContent;
+        const cpfCnpj = linhas[i].getElementsByTagName('td')[1].textContent;
+        const data = linhas[i].getElementsByTagName('td')[2].textContent;
+        const tipo = linhas[i].getElementsByTagName('td')[3].textContent;
+
+        if (nome.toUpperCase().includes(filtro) || 
+            cpfCnpj.toUpperCase().includes(filtro) ||
+            tipo.toUpperCase().includes(filtro)) {
+            linhas[i].style.display = '';
+        } else {
+            linhas[i].style.display = 'none';
+        }
+    }
 }
