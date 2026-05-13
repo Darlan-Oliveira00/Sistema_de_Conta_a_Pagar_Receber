@@ -4,7 +4,7 @@ function paginaVendas() {
                 <h1>Vendas</h1>
 
                 <div class="top-bar">
-                    <button class="btn-cadastrar-vendas" id="cadastrar-vendas" onclick="renderizarPagina('')">Cadastrar Vendas</button>
+                    <button class="btn-cadastrar-vendas" id="cadastrar-vendas" onclick="renderizarPagina('cadastroVendas')">Cadastrar Vendas</button>
 
                     <input
                         type="text"
