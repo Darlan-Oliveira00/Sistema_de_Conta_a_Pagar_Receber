@@ -1,7 +1,6 @@
 // Exemplo em qualquer página
 function paginaDashboard() {
-    const cliente = obterClienteLogado();
-    const nome = cliente ? cliente.nome : 'Visitante';
+    const nome = obterNomeUsuario();
 
     return `
         <div class="content-dashboard">

@@ -35,8 +35,8 @@ function paginaLogin() {
                 </form>
 
                 <div id="cadastrar">
-                    <p>Ainda não tem conta? <button type="button" onclick="abrirCadastroCliente()"><b>Cadastre-se cliente</b></button></p>
-                    <p>Ainda não tem conta? <button type="button" onclick="abrirCadastroFornecedor()"><b>Cadastre-se fornecedor</b></button></p>
+                    <p>Ainda não tem conta? <button type="button" onclick="renderizarPagina('cadastroCliente')"><b>Cadastre-se cliente</b></button></p>
+                    <p>Ainda não tem conta? <button type="button" onclick="renderizarPagina('cadastroFornecedor')"><b>Cadastre-se fornecedor</b></button></p>
                 </div>
             </div>
         </div>
@@ -89,17 +89,19 @@ async function fazerLogin() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 cpf: cpfCnpj,
                 cnpj: cpfCnpj,
-                senha 
+                senha
             })
         });
 
         if (response.ok) {
             console.log('Login bem-sucedido!');
+            const dados = await response.json();
+            const nome = tipoUsuario == 'cliente' ? 'nome' : 'nome_oficial_empresa';
 
-            localStorage.setItem('usuario', JSON.stringify(cpfCnpj));
+            localStorage.setItem('usuario', dados[nome]);
             localStorage.setItem('tipoUsuario', tipoUsuario);
 
             renderizarLayout();
@@ -107,10 +109,9 @@ async function fazerLogin() {
             const erro = await response.json();
             alert('Usuario não encontrado');
             console.error('Erro: ' + erro.detail);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { // senha incorreta
             const erro = await response.json();
-            alert('Senha incorreta')
-            console.log('Erro: ' + erro.detail)
+            alert(erro.detail)
         } else {
             alert('Erro ao fazer login');
             console.error('Falha no login');
@@ -119,14 +120,4 @@ async function fazerLogin() {
         console.error('Erro na requisição:', error);
         alert('Erro ao conectar com o servidor');
     }
-}
-
-// Redireciona para a pagina de Cadastro de Cliente
-function abrirCadastroCliente() {
-    renderizarPagina('cadastroCliente');
-}
-
-// Redireciona para a pagina de Cadastro de Fornecedor
-function abrirCadastroFornecedor(){
-    renderizarPagina('cadastroFornecedor');
 }
