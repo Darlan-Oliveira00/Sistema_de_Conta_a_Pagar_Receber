@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from backend.API.validações import validacao_cnpj, validacao_cpf
 from backend.models.database import get_session
 from backend.API.criptografia import *
+from backend.API.validações import *
 from backend.models.engine import *
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -13,9 +13,9 @@ router = APIRouter(tags=["cadastro e login"])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
-@router.post(path='/login_cliente', response_model=clienteGET,
+@router.post(path='/login_cliente', response_model=clienteResponse,
              responses={404: {'description': 'Usuario nao encontrado'}})
-async def login_cliente(cliente_login: clienteGET, session: SessionDep) -> clienteGET:
+async def login_cliente(cliente_login: clienteLOGIN, session: SessionDep) -> clienteResponse:
     cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cliente_login.cpf)
 
     cliente_valido = session.execute(
@@ -24,13 +24,14 @@ async def login_cliente(cliente_login: clienteGET, session: SessionDep) -> clien
 
     if cliente_valido:
         if verificar_senha(senha=cliente_login.senha, hash_salvo=cliente_valido.senha):
-            return clienteGET.model_validate(cliente_valido)
+            return clienteResponse.model_validate(cliente_valido)
         raise HTTPException(status_code=401, detail="Senha incorreta")
     raise HTTPException(status_code=404, detail='Usuario nao encontrado')
 
 
 @router.post('/cliente', response_model=clientePOST)
 async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -> HTTPException | clientePOST:
+    print(cliente_cadastro.cpf)
     cliente_valido = validacao_cpf(cpf=cliente_cadastro.cpf,
                                      nome_completo=cliente_cadastro.nome,
                                      data_nascimento=cliente_cadastro.data_nascimento,)
@@ -69,12 +70,13 @@ async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -
     return clientePOST.model_validate(cliente_novo)
 
 
-@router.post(path='/login_fornecedor', response_model=fornecedorGET,
+@router.post(path='/login_fornecedor', response_model=fornecedorResponde,
              responses={404: {'description': 'Usuario nao encontrado'},
                         401: {'description': 'Senha incorreta'}
                         })
-async def login_fornecedor(fornecedor_login: fornecedorGET, session: SessionDep) -> fornecedorGET:
-    cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=fornecedor_login.cnpj)
+async def login_fornecedor(fornecedor_login: fornecedorLOGIN, session: SessionDep) -> fornecedorResponde:
+    cnpj = ''.join(re.sub(r'\W', '', fornecedor_login.cnpj))
+    cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=cnpj)
 
     fornecedor_valido = session.execute(
         select(fornecedor).where(fornecedor.cnpj == cnpj_HASH)
@@ -82,7 +84,7 @@ async def login_fornecedor(fornecedor_login: fornecedorGET, session: SessionDep)
 
     if fornecedor_valido:
         if verificar_senha(senha=fornecedor_login.senha, hash_salvo=fornecedor_valido.senha):
-            return fornecedorGET.model_validate(fornecedor_valido)
+            return fornecedorResponde.model_validate(fornecedor_valido)
         raise HTTPException(status_code=401, detail="Senha incorreta")
     raise HTTPException(status_code=404, detail='Usuario nao encontrado')
 
@@ -92,10 +94,11 @@ async def cadastro_fornecedor(fornecedor_cadastro: fornecedorREQUEST, session: S
     fornecedor_dados = validacao_cnpj(cnpj=fornecedor_cadastro.cnpj,
                                       nome_oficial_empresa=fornecedor_cadastro.nome_oficial_empresa)
 
-    if fornecedor_dados == int:
-        return HTTPException(status_code=404, detail='erro na validação de fornecedor')
+    if isinstance(fornecedor_dados, int):
+        raise HTTPException(status_code=400, detail='Erro na validação do CNPJ')
 
-    cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=fornecedor_cadastro.cnpj)
+    cnpj = ''.join(re.sub(r'\W', '', fornecedor_cadastro.cnpj))
+    cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=cnpj)
     senha_HASH = senha_hash(senha=fornecedor_cadastro.senha)
 
     fornecedor_existe = session.execute(
@@ -118,11 +121,11 @@ async def cadastro_fornecedor(fornecedor_cadastro: fornecedorREQUEST, session: S
         porte_empresa=fornecedor_dados['porte_empresa'],
         email=fornecedor_cadastro.email,
         numero_telefone_empresa=fornecedor_cadastro.numero_telefone_empresa,
-        cep=fornecedor_cadastro['cep'],
-        uf=fornecedor_cadastro['uf'],
-        cidade=fornecedor_cadastro['cidade'],
-        bairro=fornecedor_cadastro['bairro'],
-        logradouro=fornecedor_cadastro['logradouro'],
+        cep=fornecedor_dados['cep'],
+        uf=fornecedor_dados['uf'],
+        cidade=fornecedor_dados['cidade'],
+        bairro=fornecedor_dados['bairro'],
+        logradouro=fornecedor_dados['logradouro'],
     )
 
     session.add(fornecedor_novo)
@@ -130,6 +133,8 @@ async def cadastro_fornecedor(fornecedor_cadastro: fornecedorREQUEST, session: S
     session.refresh(fornecedor_novo)
 
     return fornecedorPOST.model_validate(fornecedor_novo)
+
+
 
 
 '''
