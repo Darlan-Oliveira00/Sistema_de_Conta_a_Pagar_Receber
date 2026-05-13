@@ -39,11 +39,14 @@ class clientePOST(BaseModel):
     bairro: str
     logradouro: str
 
-class clienteGET(BaseModel):
+class clienteLOGIN(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cpf : str
     senha : str
 
+class clienteResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome: str
 
 class fornecedor(Base):
     __tablename__ = 'fornecedor'
@@ -61,18 +64,20 @@ class fornecedor(Base):
     porte_empresa: Mapped[str] = mapped_column(String(150))
     email: Mapped[str] = mapped_column(String(100))
     numero_telefone_empresa: Mapped[str] = mapped_column(String(11))
-    cep: Mapped[str] = mapped_column(String(9))
+    cep: Mapped[str] = mapped_column(String(20))
     uf: Mapped[str] = mapped_column(String(2))
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
 class fornecedorREQUEST(BaseModel):
-    cnpj: str
+    model_config = ConfigDict(from_attributes=True)
     nome_oficial_empresa: str
+    cnpj: str
+    senha: str
     email: str
     numero_telefone_empresa: str
-    senha: str
+
 
 class fornecedorPOST(BaseModel):  # class despesasPOST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -95,10 +100,14 @@ class fornecedorPOST(BaseModel):  # class despesasPOST(BaseModel):
     logradouro: str
 
 
-class fornecedorGET(BaseModel):
+class fornecedorLOGIN(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cnpj: str
     senha: str
+
+class fornecedorResponde(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_oficial_empresa: str
 
 class produto_servico(Base):
     __tablename__ = 'produtos_servico'
