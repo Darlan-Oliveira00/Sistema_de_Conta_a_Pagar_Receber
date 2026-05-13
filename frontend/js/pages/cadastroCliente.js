@@ -124,7 +124,7 @@ async function cadastrarCliente() {
                 cpf,
                 email,
                 numero_telefone_pessoal: telefone,
-                data_nascimento: dataNascimento + 'T00:00:00',
+                data_nascimento: dataNascimento,
                 cep,
                 logradouro,
                 bairro,
