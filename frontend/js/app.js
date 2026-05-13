@@ -23,15 +23,10 @@ function renderizarPagina(pagina) {
             app.innerHTML = paginaCadastroReceita();
             break;
         case 'layout':
-            renderizarLayout();
+            app.innerHTML = paginaLayout();
+            setupLayout();
             break;
         default:
             app.innerHTML = '<p>Página não encontrada</p>';
     }
-}
-
-function renderizarLayout() {
-    const app = document.getElementById('app');
-    app.innerHTML = paginaLayout();
-    setupLayout();
 }
