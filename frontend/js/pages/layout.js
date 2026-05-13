@@ -1,7 +1,7 @@
 function paginaLayout() {
     return `
         <aside>
-            <h2>Menu</h2>
+            <img src="./imgs/icons/logo.png" alt="logo">
             <ul>
                 <li><button id="btn-dashboard" onclick="renderizarSection('dashboard', event)">Dashboard</button></li>
                 <li><button id="btn-receitas" onclick="renderizarSection('receitas', event)">Cadastro de Receitas</button></li>
