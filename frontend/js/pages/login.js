@@ -97,27 +97,21 @@ async function fazerLogin() {
         });
 
         if (response.ok) {
-            console.log('Login bem-sucedido!');
             const dados = await response.json();
             const nome = tipoUsuario == 'cliente' ? 'nome' : 'nome_oficial_empresa';
-
             localStorage.setItem('usuario', dados[nome]);
             localStorage.setItem('tipoUsuario', tipoUsuario);
-
             renderizarLayout();
         } else if (response.status === 404) {
             const erro = await response.json();
-            alert('Usuario não encontrado');
-            console.error('Erro: ' + erro.detail);
-        } else if (response.status === 401) { // senha incorreta
+            alert(erro.detail); // Usuario não encontrado
+        } else if (response.status === 401) { 
             const erro = await response.json();
-            alert(erro.detail)
+            alert(erro.detail) // senha incorreta
         } else {
             alert('Erro ao fazer login');
-            console.error('Falha no login');
         }
     } catch (error) {
-        console.error('Erro na requisição:', error);
-        alert('Erro ao conectar com o servidor');
+        alert(error);
     }
 }

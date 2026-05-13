@@ -17,7 +17,11 @@ def validacao_cpf(cpf, nome_completo, data_nascimento):
         'Accept': 'application/json'
     }
 
-    response = requests.get(url=url_base, headers=headers)
+    response = requests.get(
+    url=url_base, 
+    headers=headers,
+    verify=False
+)
     try:
         response.raise_for_status()
     except requests.HTTPError as e:
