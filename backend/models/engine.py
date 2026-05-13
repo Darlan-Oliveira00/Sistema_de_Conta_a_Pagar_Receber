@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy import Integer, String, DateTime, Float, ForeignKey
 from pydantic import BaseModel, ConfigDict
@@ -24,6 +24,10 @@ class cliente(Base):
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
+
+    produtos: Mapped[list['produto_servico_cliente']] = relationship(
+        back_populates="cliente"
+    )
 
 class clientePOST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -109,31 +113,67 @@ class fornecedorResponde(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_oficial_empresa: str
 
-class produto_servico(Base):
-    __tablename__ = 'produtos_servico'
+class produto_servico_cliente(Base):
+    __tablename__ = 'produto_servico_cliente'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
+    produto_servico_cliente_uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
     classificacao_produto_servico: Mapped[str] = mapped_column(String(50))
-    cpf_cnpj_do_vendendor: Mapped[str] = mapped_column(String(150))
-    detalhes_produto_servico: Mapped[str] = mapped_column(String(150))
-    data_do_cadastro_produto_servico: Mapped[datetime] = mapped_column(DateTime)
+    nome_produto_servico: Mapped[str] = mapped_column(String(150))
+    cpf_vendendor: Mapped[str] = mapped_column(String(100),ForeignKey('cliente.cpf'), index=True)
+    detalhes_produto_servico: Mapped[str] = mapped_column(String(150), index=True)
+    data_do_cadastro_produto_servico: Mapped[str] = mapped_column(String(30))
     valor_custo_produto_servico: Mapped[float] = mapped_column(Float)
     ICMS_do_produto_servico: Mapped[str] = mapped_column(String(150))
     valor_com_IMCS_produto_servico: Mapped[float] = mapped_column(Float)
     valor_final_de_venda_produto_servico: Mapped[float] = mapped_column(Float)
     margem_de_lucro_produto_servico: Mapped[float] = mapped_column(Float)
 
+    cliente: Mapped['cliente'] = relationship(back_populates="produtos")
 
-class produto_servicoPOST(BaseModel):
+
+class produto_servico_cliente_REQUEST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    uuid: UUID
+    cpf : str
     classificacao_produto_servico: str
-    cpf_cnpj_do_vendendor: str
+    nome_produto_servico: str
     detalhes_produto_servico: str
-    data_do_cadastro_produto_servico: datetime
+    valor_custo_de_venda_produto_servico: float
+    valor_final_de_venda_produto_servico: float
+
+class produto_servico_cliente_POST(produto_servico_cliente_REQUEST):
+        uuid: UUID
+
+class produto_servico_cliente_Response(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    classificacao_produto_servico: str
+    detalhes_produto_servico: str
+    data_do_cadastro_produto_servico: str
     valor_custo_produto_servico: float
     ICMS_do_produto_servico: str
     valor_com_IMCS_produto_servico: float
     valor_final_de_venda_produto_servico: float
     margem_de_lucro_produto_servico: float
+
+class produto_servico_fornecedor(Base):
+    __tablename__ = 'produtos_servico_produto'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
+    classificacao_produto_servico: Mapped[str] = mapped_column(String(50))
+    cpf_vendendor: Mapped[str] = mapped_column(ForeignKey('fornecedor.cnpj'), index=True)
+    detalhes_produto_servico: Mapped[str] = mapped_column(String(150))
+    data_do_cadastro_produto_servico: Mapped[str] = mapped_column(String(30))
+    valor_custo_produto_servico: Mapped[float] = mapped_column(Float)
+    ICMS_do_produto_servico: Mapped[str] = mapped_column(String(150))
+    valor_com_IMCS_produto_servico: Mapped[float] = mapped_column(Float)
+    valor_final_de_venda_produto_servico: Mapped[float] = mapped_column(Float)
+    margem_de_lucro_produto_servico: Mapped[float] = mapped_column(Float)
+
+    class produto_servico_fornecedor_REQUEST(BaseModel):
+        model_config = ConfigDict(from_attributes=True)
+        cnpj: str
+        classificacao_produto_servico: str
+        detalhes_produto_servico: str
+        valor_custo_produto_servico: float
+        valor_final_de_venda_produto_servico: float
