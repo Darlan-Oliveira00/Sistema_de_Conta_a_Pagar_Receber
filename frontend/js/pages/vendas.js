@@ -1,4 +1,4 @@
-function paginaVendas(){
+function paginaVendas() {
     return `
         <div class="card-vendas">
                 <h1>Vendas</h1>
@@ -11,7 +11,7 @@ function paginaVendas(){
                         placeholder="Buscar Vendas"
                         class="search"
                         id="buscar-vendas"
-                        onkeyup=""
+                        onkeyup="pesquisarVendas()"
                     >
                 </div>
 
@@ -72,4 +72,25 @@ function paginaVendas(){
                 </div>
             </div>
     `
+}
+
+function pesquisarVendas() {
+    const input = document.getElementById('buscar-vendas');
+    const filtro = input.value.toUpperCase();
+    const tabela = document.getElementById('tabela-vendas');
+    const linhas = tabela.querySelectorAll('tbody tr');
+
+    for (let i = 0; i < linhas.length; i++) {
+        const nome = linhas[i].getElementsByTagName('td')[0].textContent;
+        const cpfcnpj = linhas[i].getElementsByTagName('td')[1].textContent;
+        const tipo = linhas[i].getElementsByTagName('td')[3].textContent;
+
+        if (nome.toUpperCase().includes(filtro) ||
+            cpfcnpj.toUpperCase().includes(filtro) ||
+            tipo.toUpperCase().includes(filtro)) {
+            linhas[i].style.display = '';
+        } else {
+            linhas[i].style.display = 'none';
+        }
+    }
 }
