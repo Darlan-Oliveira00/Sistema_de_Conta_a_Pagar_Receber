@@ -25,12 +25,10 @@ function setupLayout() {
 function renderizarSection(pagina, evento) {
     const section = document.getElementById('section');
 
-    // Remove a classe 'active' de todos os botões
     document.querySelectorAll('aside button').forEach(btn => {
         btn.classList.remove('active');
     });
 
-    // Adiciona a classe 'active' no botão clicado ou no correspondente
     if (evento) {
         evento.target.classList.add('active');
     } else {
