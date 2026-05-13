@@ -7,6 +7,10 @@ function obterTipoUsuario() {
     return localStorage.getItem('tipoUsuario');
 }
 
+function obterCfpCnpjUsuario(){
+    return localStorage.getItem('cfpcnpj');
+}
+
 function estaLogado() {
     return localStorage.getItem('usuario') !== null;
 }
