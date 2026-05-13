@@ -35,6 +35,7 @@ aside button {
 aside button:hover {
     background-color: #FFC107;
     border: #856404 2px solid;
+    cursor: pointer;
 }
 
 aside button.active {
