@@ -83,7 +83,6 @@ function pesquisarReceita() {
     for (let i = 0; i < linhas.length; i++) {
         const nome = linhas[i].getElementsByTagName('td')[0].textContent;
         const cpfCnpj = linhas[i].getElementsByTagName('td')[1].textContent;
-        const data = linhas[i].getElementsByTagName('td')[2].textContent;
         const tipo = linhas[i].getElementsByTagName('td')[3].textContent;
 
         if (nome.toUpperCase().includes(filtro) || 
