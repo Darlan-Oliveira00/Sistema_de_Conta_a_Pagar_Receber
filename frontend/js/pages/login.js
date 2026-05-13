@@ -44,7 +44,6 @@ function paginaLogin() {
     `;
 }
 
-// Mudar placeholder e máximo de caracteres conforme tipo
 function mudarTipoUsuario() {
     const tipoUsuario = document.getElementById('tipoUsuario').value;
     const inputUsuario = document.getElementById('usuario');
@@ -60,7 +59,6 @@ function mudarTipoUsuario() {
     inputUsuario.value = '';
 }
 
-// Faz a validação e autenticação dos dados e redireciona para a pagina layout
 async function fazerLogin() {
     const tipoUsuario = document.getElementById('tipoUsuario').value;
     const cpfCnpj = document.getElementById('usuario').value.replace(/\D/g, '');
@@ -101,7 +99,7 @@ async function fazerLogin() {
             const nome = tipoUsuario == 'cliente' ? 'nome' : 'nome_oficial_empresa';
             localStorage.setItem('usuario', dados[nome]);
             localStorage.setItem('tipoUsuario', tipoUsuario);
-            renderizarLayout();
+            renderizarPagina('layout');
         } else if (response.status === 404) {
             const erro = await response.json();
             alert(erro.detail); // Usuario não encontrado

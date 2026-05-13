@@ -22,16 +22,17 @@ function renderizarPagina(pagina) {
         case 'cadastroReceita':
             app.innerHTML = paginaCadastroReceita();
             break;
+        case 'cadastroItens':
+            app.innerHTML = paginaCadastroItens();
+            break;
+        case 'cadastroVendas':
+            app.innerHTML = paginaCadastroVendas();
+            break;
         case 'layout':
-            renderizarLayout();
+            app.innerHTML = paginaLayout();
+            setupLayout();
             break;
         default:
             app.innerHTML = '<p>Página não encontrada</p>';
     }
-}
-
-function renderizarLayout() {
-    const app = document.getElementById('app');
-    app.innerHTML = paginaLayout();
-    setupLayout();
 }

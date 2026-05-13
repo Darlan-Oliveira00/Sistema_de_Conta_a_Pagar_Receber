@@ -97,7 +97,6 @@ async function cadastrarCliente() {
     const senha = document.getElementById('senha').value;
     const confirmarSenha = document.getElementById('confirmarSenha').value;
 
-    // Validações
     if (!nome || !cpf || !email || !telefone || !dataNascimento || !cep || !logradouro || !bairro || !estado || !cidade || !senha) {
         alert('Preencha todos os campos obrigatórios');
         return;

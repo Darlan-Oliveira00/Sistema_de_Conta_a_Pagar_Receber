@@ -46,7 +46,6 @@ async function cadastrarFornecedor() {
     const senha = document.getElementById('senha-empresa').value;
     const confirmarSenha = document.getElementById('senha-empresa-cfn').value;
 
-    // Validações básicas
     if (!nome || !cnpj || !email || !telefone || !senha || !confirmarSenha) {
         alert('Preencha todos os campos obrigatórios');
         return;
@@ -112,11 +111,11 @@ async function cadastrarFornecedor() {
             throw new Error(mensagem);
         }
 
-        alert('✅ Fornecedor cadastrado com sucesso!');
+        alert('Fornecedor cadastrado com sucesso!');
         renderizarPagina('login');
 
     } catch (error) {
         console.error('Erro no cadastro:', error);
-        alert(`❌ ${error.message}`);
+        alert(`${error.message}`);
     }
 }
