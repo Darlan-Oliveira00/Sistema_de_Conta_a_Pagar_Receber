@@ -1,13 +1,14 @@
+import DateTime.DateTime
 from fastapi import APIRouter, Depends, HTTPException
 from backend.models.database import get_session
 from backend.API.criptografia import *
 from backend.API.validações import *
 from backend.models.engine import *
 from sqlalchemy.orm import Session
+from datetime import datetime
 from sqlalchemy import select
 from typing import Annotated
 
-from backend.models.engine import clientePOST
 
 router = APIRouter(tags=["cadastro e login"])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -16,7 +17,7 @@ SessionDep = Annotated[Session, Depends(get_session)]
 @router.post(path='/login_cliente', response_model=clienteResponse,
              responses={404: {'description': 'Usuario nao encontrado'}})
 async def login_cliente(cliente_login: clienteLOGIN, session: SessionDep) -> clienteResponse:
-    cpf = ''.join(re.sub(r'\W', '', cliente_login.cpf))
+    cpf = normalidado_cpf(cpf=cliente_login.cpf)
     cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cpf)
 
     cliente_valido = session.execute(
@@ -32,14 +33,15 @@ async def login_cliente(cliente_login: clienteLOGIN, session: SessionDep) -> cli
 
 @router.post('/cliente', response_model=clientePOST)
 async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -> HTTPException | clientePOST:
-    cliente_valido = validacao_cpf(cpf=cliente_cadastro.cpf,
+    cpf = normalidado_cpf(cpf=cliente_cadastro.cpf)
+    cliente_valido = validacao_cpf(cpf=cpf,
                                      nome_completo=cliente_cadastro.nome,
                                      data_nascimento=cliente_cadastro.data_nascimento,)
 
     if cliente_valido != 200:
         raise HTTPException(status_code=400, detail='Erro na validação do CPF')
 
-    cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cliente_cadastro.cpf)
+    cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cpf)
     senha_HASH = senha_hash(senha=cliente_cadastro.senha)
 
     cliente_existe = session.execute(
@@ -75,7 +77,7 @@ async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -
                         401: {'description': 'Senha incorreta'}
                         })
 async def login_fornecedor(fornecedor_login: fornecedorLOGIN, session: SessionDep) -> fornecedorResponde:
-    cnpj = ''.join(re.sub(r'\W', '', fornecedor_login.cnpj))
+    cnpj = normalidado_cnpj(fornecedor_login.cnpj)
     cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=cnpj)
 
     fornecedor_valido = session.execute(
@@ -90,14 +92,15 @@ async def login_fornecedor(fornecedor_login: fornecedorLOGIN, session: SessionDe
 
 
 @router.post('/fornecedor', response_model=fornecedorPOST)
-async def cadastro_fornecedor(fornecedor_cadastro: fornecedorREQUEST, session: SessionDep) -> fornecedorPOST | HTTPException:
-    fornecedor_dados = validacao_cnpj(cnpj=fornecedor_cadastro.cnpj,
+async def cadastro_fornecedor(fornecedor_cadastro: fornecedorREQUEST,
+                              session: SessionDep) -> fornecedorPOST | HTTPException:
+    cnpj = normalidado_cnpj(cnpj=fornecedor_cadastro.cnpj)
+    fornecedor_dados = validacao_cnpj(cnpj=cnpj,
                                       nome_oficial_empresa=fornecedor_cadastro.nome_oficial_empresa)
 
     if isinstance(fornecedor_dados, int):
         raise HTTPException(status_code=400, detail='Erro na validação do CNPJ')
 
-    cnpj = ''.join(re.sub(r'\W', '', fornecedor_cadastro.cnpj))
     cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=cnpj)
     senha_HASH = senha_hash(senha=fornecedor_cadastro.senha)
 
@@ -134,7 +137,41 @@ async def cadastro_fornecedor(fornecedor_cadastro: fornecedorREQUEST, session: S
 
     return fornecedorPOST.model_validate(fornecedor_novo)
 
+@router.post('/produto_servico_cliente', response_model=produto_servico_cliente_Response)
+async def cadastro_produto_servico(produto_servico_cliente_cadastro: produto_servico_cliente_REQUEST,
+                                   session: SessionDep) -> produto_servico_cliente_Response | HTTPException:
+    cpf = normalidado_cpf(produto_servico_cliente_cadastro.cpf)
+    cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cpf)
 
+
+    imcs = lambda x: x * 0.18
+    valor_com_imcs = float(imcs(produto_servico_cliente_cadastro.valor_final_de_venda_produto_servico))
+    margem = (lambda x,y, z: x - (y + z) )
+    marga_de_lucro = float(margem(produto_servico_cliente_cadastro.valor_final_de_venda_produto_servico,
+                            produto_servico_cliente_cadastro.valor_custo_de_venda_produto_servico,
+                            valor_com_imcs))
+
+    novo_uuid =  uuid4()
+
+    produto_servico = produto_servico_cliente(
+        produto_servico_cliente_uuid = novo_uuid,
+        classificacao_produto_servico = produto_servico_cliente_cadastro.classificacao_produto_servico,
+        nome_produto_servico = produto_servico_cliente_cadastro.nome_produto_servico,
+        cpf_vendendor = cpf_HASH,
+        detalhes_produto_servico = produto_servico_cliente_cadastro.detalhes_produto_servico,
+        data_do_cadastro_produto_servico = datetime.strptime(datetime.today().strftime('%Y-%m-%d'), '%Y-%m-%d'),
+        valor_custo_produto_servico = produto_servico_cliente_cadastro.valor_custo_de_venda_produto_servico,
+        ICMS_do_produto_servico = "18%",
+        valor_com_IMCS_produto_servico = valor_com_imcs,
+        valor_final_de_venda_produto_servico = produto_servico_cliente_cadastro.valor_final_de_venda_produto_servico,
+        margem_de_lucro_produto_servico = marga_de_lucro,
+    )
+
+    session.add(produto_servico)
+    session.commit()
+    session.refresh(produto_servico)
+
+    return produto_servico_cliente_Response.model_validate(produto_servico)
 
 
 '''
