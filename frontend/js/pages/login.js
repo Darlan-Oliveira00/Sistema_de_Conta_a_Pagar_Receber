@@ -80,18 +80,18 @@ async function fazerLogin() {
     }
 
     try {
-        const rota = tipoUsuario === 'cliente' ? '/login_cliente' : '/login_fornecedor/';
+        const rota = tipoUsuario === 'cliente' ? '/login_cliente' : '/login_fornecedor';
+
+        const body = tipoUsuario === 'cliente'
+            ? { cpf: cpfCnpj, senha }
+            : { cnpj: cpfCnpj, senha };
 
         const response = await fetch(`${API_BASE_URL}${rota}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                cpf: cpfCnpj,
-                cnpj: cpfCnpj,
-                senha
-            })
+            body: JSON.stringify(body)
         });
 
         if (response.ok) {
@@ -99,11 +99,13 @@ async function fazerLogin() {
             const nome = tipoUsuario == 'cliente' ? 'nome' : 'nome_oficial_empresa';
             localStorage.setItem('usuario', dados[nome]);
             localStorage.setItem('tipoUsuario', tipoUsuario);
+            localStorage.setItem('cfpcnpj', cpfCnpj);
+
             renderizarPagina('layout');
         } else if (response.status === 404) {
             const erro = await response.json();
             alert(erro.detail); // Usuario não encontrado
-        } else if (response.status === 401) { 
+        } else if (response.status === 401) {
             const erro = await response.json();
             alert(erro.detail) // senha incorreta
         } else {
