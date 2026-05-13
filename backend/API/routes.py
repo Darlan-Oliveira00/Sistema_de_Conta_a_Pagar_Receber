@@ -16,7 +16,8 @@ SessionDep = Annotated[Session, Depends(get_session)]
 @router.post(path='/login_cliente', response_model=clienteResponse,
              responses={404: {'description': 'Usuario nao encontrado'}})
 async def login_cliente(cliente_login: clienteLOGIN, session: SessionDep) -> clienteResponse:
-    cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cliente_login.cpf)
+    cpf = ''.join(re.sub(r'\W', '', cliente_login.cpf))
+    cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cpf)
 
     cliente_valido = session.execute(
         select(cliente).where(cliente.cpf == cpf_HASH)
