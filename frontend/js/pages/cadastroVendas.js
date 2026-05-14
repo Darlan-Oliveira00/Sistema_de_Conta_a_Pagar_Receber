@@ -85,7 +85,7 @@ async function cadastrarVendas() {
     if (response.ok) {
       const item = await response.json();
 
-      alert(`Item "${nome}" cadastrado com sucesso!`);
+      alert(`Venda cadastrada com sucesso!`);
 
     } else {
       const erro = await response.json();
