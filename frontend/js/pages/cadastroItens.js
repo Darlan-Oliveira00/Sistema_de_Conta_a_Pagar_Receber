@@ -90,9 +90,6 @@ async function cadastrarItem() {
     btnCadastrar.disabled = true;
     btnCadastrar.textContent = "Cadastrando...";
 
-    console.log('Enviando dados:', dados);
-    console.log('URL:', `${API_BASE_URL}/produto_servico_${rota}`);
-
     const response = await fetch(`${API_BASE_URL}/produto_servico_${rota}`, {
       method: 'POST',
       headers: {
@@ -104,14 +101,10 @@ async function cadastrarItem() {
     if (response.ok) {
       const item = await response.json();
       console.log('Item cadastrado com sucesso:', item);
-      
-      // ✅ Mostrar sucesso
+
       alert(`✓ Item "${nome}" cadastrado com sucesso!`);
-      
-      // ✅ Limpar formulário
-      document.getElementById('form-cadastro-item').reset();
-      document.getElementById('item-tipo').focus();
-      
+
+
     } else {
       const erro = await response.json();
       console.error('Erro da API:', erro);
@@ -121,9 +114,5 @@ async function cadastrarItem() {
   } catch (error) {
     console.error('Erro na requisição:', error);
     alert(`Erro ao conectar ao servidor: ${error.message}`);
-  } finally {
-    const btnCadastrar = document.getElementById('btn-cadastroItem');
-    btnCadastrar.disabled = false;
-    btnCadastrar.textContent = "Cadastrar";
   }
 }
