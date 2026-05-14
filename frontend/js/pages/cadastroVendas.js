@@ -16,12 +16,12 @@ function paginaCadastroVendas() {
 
       <div>
         <label>Valor da Venda</label>
-        <input type="text" id="valor-venda" placeholder="Digite o valor da venda">
+        <input type="number" id="valor-venda" placeholder="Digite o valor da venda">
       </div>
 
       <div>
         <label>Porcentagem do desconto</label>
-        <input type="text" id="porcentagem" placeholder="Digite a porcentagem d0 desconto">
+        <input type="number" id="porcentagem" placeholder="Digite a porcentagem d0 desconto">
       </div>
 
       <div class="btn-area">

@@ -21,7 +21,7 @@ function paginaCadastroReceita() {
 
       <div>
         <label>Valor:</label>
-        <input type="text" placeholder="Digite o valor da receita (pagamento)" id="valor-receita">
+        <input type="number" placeholder="Digite o valor da receita (pagamento)" id="valor-receita">
       </div>
 
       <div class="btn-area">
