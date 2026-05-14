@@ -29,6 +29,7 @@ function logout() {
 
     localStorage.removeItem('usuario');
     localStorage.removeItem('tipoUsuario');
+    localStorage.removeItem('cfpcnpj');
 
     renderizarPagina('login');
 }
