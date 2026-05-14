@@ -1,10 +1,9 @@
-function obterClienteLogado() {
-    const usuario = localStorage.getItem('usuario');
-    return usuario ? usuario : null;
-}
-
 function obterTipoUsuario() {
     return localStorage.getItem('tipoUsuario');
+}
+
+function obterCfpCnpjUsuario(){
+    return localStorage.getItem('cfpcnpj');
 }
 
 function estaLogado() {
@@ -25,11 +24,12 @@ function logout() {
 
     localStorage.removeItem('usuario');
     localStorage.removeItem('tipoUsuario');
+    localStorage.removeItem('cfpcnpj');
 
     renderizarPagina('login');
 }
 
 function obterNomeUsuario() {
-    const usuario = obterClienteLogado();
+    const usuario = localStorage.getItem('usuario');
     return usuario ? usuario : 'Usuário';
 }

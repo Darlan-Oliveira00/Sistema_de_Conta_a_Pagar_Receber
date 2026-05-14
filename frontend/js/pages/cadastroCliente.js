@@ -136,20 +136,16 @@ async function cadastrarCliente() {
         if (response.ok) {
             const cliente = await response.json();
             alert('Cadastro realizado com sucesso!');
-            console.log('Cliente cadastrado:', cliente);
             renderizarPagina('login');
         }else if(response.status === 409){
             const erro = await response.json();
-            alert('Usuario já possui cadastrado');
-            console.log('Erro: ' + erro.detail);
+            alert(erro);
         } else {
             const erro = await response.json();
             alert('Erro ao cadastrar: ' + (erro.detail || 'Tente novamente'));
-            console.error('Erro no cadastro:', erro);
         }
     } catch (error) {
-        console.error('Erro na requisição:', error);
-        alert('Erro ao conectar com o servidor');
+        alert('Erro ao conectar com o servidor: ', error);
     }
 }
 
@@ -158,13 +154,9 @@ async function buscarCEP(cep) {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const dados = await response.json();
 
-        if (dados.erro) {
-            throw new Error('CEP não encontrado');
-        }
-
         return dados;
     } catch (error) {
-        console.error('Erro ao buscar CEP:', error);
+        alert('Erro ao buscar CEP:', error);
         return null;
     }
 }
