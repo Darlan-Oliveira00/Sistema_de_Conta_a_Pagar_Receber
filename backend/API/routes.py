@@ -176,7 +176,7 @@ async def cadastro_produto_servico(produto_servico_cliente_cadastro: produto_ser
 @router.post('/produto_servico_fornecedor', response_model=produto_servico_fornecedor_Response)
 async def cadastro_produto_servico(produto_servico_fornecedor_cadastro: produto_servico_fornecedor_REQUEST,
                                    session: SessionDep) -> produto_servico_fornecedor_Response | HTTPException:
-    cnpj = normalidado_cpf(produto_servico_fornecedor_cadastro.cnpj)
+    cnpj = normalidado_cnpj(produto_servico_fornecedor_cadastro.cnpj)
     cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=cnpj)
 
 
