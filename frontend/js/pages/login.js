@@ -117,5 +117,10 @@ async function fazerLogin() {
         }
     } catch (error) {
         alert(error);
+    }finally{
+        const btnLogar = document.getElementById('btn-logar');
+        btnLogar.disabled = false;
+        btnLogar.textContent = "Entrar";
     }
+
 }

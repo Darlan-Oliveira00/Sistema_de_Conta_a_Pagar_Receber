@@ -77,7 +77,7 @@ async def cadastro_cliente(cliente_cadastro: clientePOST, session: SessionDep) -
                         401: {'description': 'Senha incorreta'}
                         })
 async def login_fornecedor(fornecedor_login: fornecedorLOGIN, session: SessionDep) -> fornecedorResponde:
-    cnpj = normalizadacao_cpf_cnpj(cpf_cnpj=fornecedor.cnpj)
+    cnpj = normalizadacao_cpf_cnpj(cpf_cnpj=fornecedor_login.cnpj)
     cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=cnpj)
 
     fornecedor_valido = session.execute(
