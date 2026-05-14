@@ -1,8 +1,3 @@
-function obterClienteLogado() {
-    const usuario = localStorage.getItem('usuario');
-    return usuario ? usuario : null;
-}
-
 function obterTipoUsuario() {
     return localStorage.getItem('tipoUsuario');
 }
@@ -35,6 +30,6 @@ function logout() {
 }
 
 function obterNomeUsuario() {
-    const usuario = obterClienteLogado();
+    const usuario = localStorage.getItem('usuario');
     return usuario ? usuario : 'Usuário';
 }
