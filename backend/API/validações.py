@@ -70,11 +70,9 @@ def validacao_cnpj(cnpj,nome_oficial_empresa ):
 def remover_acentos(texto):
     return unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('ascii')
 
-def normalidado_cpf(cpf) -> str:
-    return ''.join(re.sub(r'\W', '', cpf))
+def normalizadacao_cpf_cnpj(cpf_cnpj) -> str:
+    return ''.join(re.sub(r'\W', '', cpf_cnpj))
 
-def normalidado_cnpj(cnpj) -> str:
-    return ''.join(re.sub(r'\W', '', cnpj))
 
 if __name__ == '__main__':
     resposta = validacao_cnpj('34.028.316/0001-03', 'Empresa Brasileira de Correios e Telégrafos ')
