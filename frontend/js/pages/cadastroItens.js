@@ -67,29 +67,22 @@ async function cadastrarItem() {
   }
 
   try {
-    const rota = obterTipoUsuario();
     const cpfCnpj = obterCfpCnpjUsuario();
 
     const dados = {
+      cpf_cnpj: cpfCnpj,
       classificacao_produto_servico: tipo,
-      nome_produto_servico: nome,
+      identidicado_produto_servico: nome,
       detalhes_produto_servico: descricao,
-      valor_final_de_venda_produto_servico: valorFinalNum
+      valor_custo_de_venda: valorBrutoNum,
+      valor_final_de_venda: valorFinalNum
     };
-
-    if (rota === 'cliente') {
-      dados.cpf = cpfCnpj;
-      dados.valor_custo_de_venda_produto_servico = valorBrutoNum;
-    } else {
-      dados.cnpj = cpfCnpj;
-      dados.valor_custo_produto_servico = valorBrutoNum;
-    }
 
     const btnCadastrar = document.getElementById('btn-cadastroItem');
     btnCadastrar.disabled = true;
     btnCadastrar.textContent = "Cadastrando...";
 
-    const response = await fetch(`${API_BASE_URL}/produto_servico_${rota}`, {
+    const response = await fetch(`${API_BASE_URL}/produto_servico`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -109,5 +102,9 @@ async function cadastrarItem() {
 
   } catch (error) {
     alert(`Erro ao conectar ao servidor: ${error.message}`);
+  }finally{
+    const btnCadastrar = document.getElementById('btn-cadastroItem');
+    btnCadastrar.disabled = false;
+    btnCadastrar.textContent = "Cadastrar";
   }
 }
