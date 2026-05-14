@@ -199,7 +199,6 @@ class vendas_REQUEST(BaseModel):
     forma_pagamento: str
     valor_venda: float
     porcentagem_desconto: float
-    valor_final_venda: float
 
 class vendas_RESPONSE(BaseModel):
     model_config = ConfigDict(from_attributes=True)

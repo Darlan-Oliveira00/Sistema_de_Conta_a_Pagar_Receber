@@ -189,3 +189,40 @@ async def cadastro_produto_servico(produto_servico_cadastro: produto_servico_REQ
 
     return produto_servico_Response.model_validate(produto_servico_novo)
 
+@router.post('/vendas', response_model=vendas_RESPONSE)
+async def cadastro_produto_servico(vendas_cadastro: vendas_REQUEST,
+                                   session: SessionDep) ->vendas_RESPONSE | HTTPException:
+    cpf_cnpj_vendendor = normalizadacao_cpf_cnpj(cpf_cnpj=vendas_cadastro.cpf_cnpj_vendendor)
+    cpf_cnpj_comprador = normalizadacao_cpf_cnpj(cpf_cnpj=vendas_cadastro.cpf_cnpj_comprador)
+    if len(cpf_cnpj_vendendor) == 11:
+        cpf_vendendor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_vendendor)
+        cnpj_vendendor = None
+    else:
+        cpf_vendendor = None
+        cnpj_vendendor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_vendendor)
+
+    if len(cpf_cnpj_comprador) == 11:
+        cpf_comprador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_comprador)
+        cnpj_comprador = None
+    else:
+        cpf_comprador = None
+        cnpj_comprador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_comprador)
+
+    valor_final = vendas_cadastro.valor_venda * ((100 - vendas_cadastro.porcentagem_desconto)/100)
+
+    vendas_nova = vendas(
+        cpf_vendendor = cpf_vendendor,
+        cnpj_vendendor = cnpj_vendendor,
+        cpf_comprador = cpf_comprador,
+        cnpj_comprador = cnpj_comprador,
+        forma_pagamento = vendas_cadastro.forma_pagamento,
+        valor_venda= vendas_cadastro.valor_venda,
+        porcentagem_desconto = vendas_cadastro.porcentagem_desconto,
+        valor_final_venda = valor_final,
+    )
+
+    session.add(vendas_nova)
+    session.commit()
+    session.refresh(vendas_nova)
+
+    return vendas_RESPONSE.model_validate(vendas_nova)
