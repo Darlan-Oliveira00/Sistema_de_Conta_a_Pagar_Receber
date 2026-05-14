@@ -258,8 +258,8 @@ class receita(Base):
 
 class receitas_REQUEST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    cpf_recebedor: str
-    cpf_pagador: str
+    cpf_cnpj_recebedor: str
+    cpf_cnpj_pagado: str
     valor_receita: float
     data_evento_receita: str
     origem_receita: str

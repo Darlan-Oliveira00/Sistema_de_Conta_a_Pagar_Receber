@@ -261,3 +261,38 @@ async def cadastro_produto_servico(despesas_cadastro: despesasRESQUEST,
     session.refresh(despesas_nova)
 
     return despesasResponse.model_validate(despesas_nova)
+
+@router.post('/receita', response_model=receitas_RESPONSE)
+async def cadastro_produto_servico(receita_cadastro: receitas_REQUEST,
+                                   session: SessionDep) -> receitas_RESPONSE | HTTPException:
+    cpf_cnpj_recebedor = normalizadacao_cpf_cnpj(cpf_cnpj=receita_cadastro.cpf_cnpj_recebedor)
+    cpf_cnpj_pagador = normalizadacao_cpf_cnpj(cpf_cnpj=receita_cadastro.cpf_cnpj_pagado)
+    if len(cpf_cnpj_recebedor) == 11:
+        cpf_recebedor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_recebedor)
+        cnpj_recebedor = None
+    else:
+        cpf_recebedor = None
+        cnpj_recebedor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_recebedor)
+
+    if len(cpf_cnpj_pagador) == 11:
+        cpf_pagador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_pagador)
+        cnpj_pagador = None
+    else:
+        cpf_pagador = None
+        cnpj_pagador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_pagador)
+
+    receita_nova = receita(
+        cpf_recebedor =cpf_recebedor,
+        cnpj_recebedor= cnpj_recebedor,
+        cpf_pagador =cpf_pagador,
+        cnpj_pagador = cnpj_pagador,
+        valor_receita = receita_cadastro.valor_receita,
+        data_evento_receita = receita_cadastro.data_evento_receita,
+        origem_receita = receita_cadastro.origem_receita,
+    )
+
+    session.add(receita_nova)
+    session.commit()
+    session.refresh(receita_nova)
+
+    return receitas_RESPONSE.model_validate(receita_nova)
