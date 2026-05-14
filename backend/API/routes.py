@@ -226,3 +226,38 @@ async def cadastro_produto_servico(vendas_cadastro: vendas_REQUEST,
     session.refresh(vendas_nova)
 
     return vendas_RESPONSE.model_validate(vendas_nova)
+
+@router.post('/despesas', response_model=despesasResponse)
+async def cadastro_produto_servico(despesas_cadastro: despesasRESQUEST,
+                                   session: SessionDep) -> despesasResponse | HTTPException:
+    cpf_cnpj_pagador = normalizadacao_cpf_cnpj(cpf_cnpj=despesas_cadastro.cpf_cnpj_pagador)
+    cpf_cnpj_recebedor = normalizadacao_cpf_cnpj(cpf_cnpj=despesas_cadastro.cpf_cnpj_recebedor)
+    if len(cpf_cnpj_pagador) == 11:
+        cpf_pagador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_pagador)
+        cnpj_pagador = None
+    else:
+        cpf_pagador = None
+        cnpj_pagador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_pagador)
+
+    if len(cpf_cnpj_recebedor) == 11:
+        cpf_recebedor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_recebedor)
+        cnpj_recebedor = None
+    else:
+        cpf_recebedor = None
+        cnpj_recebedor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_recebedor)
+
+    despesas_nova = despesas(
+        cpf_pagado =cpf_pagador,
+        cnpj_pagado= cnpj_pagador,
+        cpf_recebedor =cpf_recebedor,
+        cnpj_recebedor = cnpj_recebedor,
+        valor_despesas = despesas_cadastro.valor_despesas,
+        data_evento = despesas_cadastro.data_evento,
+        tipo_de_despesa = despesas_cadastro.tipo_de_despesa,
+    )
+
+    session.add(despesas_nova)
+    session.commit()
+    session.refresh(despesas_nova)
+
+    return despesasResponse.model_validate(despesas_nova)
