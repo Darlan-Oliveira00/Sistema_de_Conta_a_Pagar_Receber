@@ -30,7 +30,7 @@ function paginaLogin() {
                     </div>
 
                     <div class="btn-entrar">
-                        <button type="button" onclick="fazerLogin()">Entrar</button>
+                        <button type="button" id="btn-logar" onclick="fazerLogin()">Entrar</button>
                     </div>
                 </form>
 
@@ -85,6 +85,10 @@ async function fazerLogin() {
         const body = tipoUsuario === 'cliente'
             ? { cpf: cpfCnpj, senha }
             : { cnpj: cpfCnpj, senha };
+
+        const btnLogar = document.getElementById('btn-logar');
+        btnLogar.disabled = true;
+        btnLogar.textContent = "Entrando...";
 
         const response = await fetch(`${API_BASE_URL}${rota}`, {
             method: 'POST',
