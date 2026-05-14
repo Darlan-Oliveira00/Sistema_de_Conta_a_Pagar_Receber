@@ -85,7 +85,7 @@ async function cadastrarReceita() {
     if (response.ok) {
       const item = await response.json();
 
-      alert(`Item "${nome}" cadastrado com sucesso!`);
+      alert(`Receita cadastrada com sucesso!`);
 
     } else {
       const erro = await response.json();
