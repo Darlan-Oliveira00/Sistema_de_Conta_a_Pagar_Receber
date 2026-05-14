@@ -75,7 +75,6 @@ async function cadastrarItem() {
       classificacao_produto_servico: tipo,
       nome_produto_servico: nome,
       detalhes_produto_servico: descricao,
-      valor_custo_produto_servico: valorBrutoNum,
       valor_final_de_venda_produto_servico: valorFinalNum
     };
 
@@ -84,6 +83,7 @@ async function cadastrarItem() {
       dados.valor_custo_de_venda_produto_servico = valorBrutoNum;
     } else {
       dados.cnpj = cpfCnpj;
+      dados.valor_custo_produto_servico = valorBrutoNum;
     }
 
     const btnCadastrar = document.getElementById('btn-cadastroItem');
