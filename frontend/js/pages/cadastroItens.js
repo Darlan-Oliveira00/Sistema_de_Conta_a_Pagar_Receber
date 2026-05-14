@@ -69,7 +69,6 @@ async function cadastrarItem() {
   try {
     const rota = obterTipoUsuario();
     const cpfCnpj = obterCfpCnpjUsuario();
-    console.log(cpfCnpj);
 
     const dados = {
       classificacao_produto_servico: tipo,
@@ -100,19 +99,15 @@ async function cadastrarItem() {
 
     if (response.ok) {
       const item = await response.json();
-      console.log('Item cadastrado com sucesso:', item);
 
-      alert(`✓ Item "${nome}" cadastrado com sucesso!`);
-
+      alert(`Item "${nome}" cadastrado com sucesso!`);
 
     } else {
       const erro = await response.json();
-      console.error('Erro da API:', erro);
       alert(`Erro ao cadastrar: ${erro.detail || 'Erro desconhecido'}`);
     }
 
   } catch (error) {
-    console.error('Erro na requisição:', error);
     alert(`Erro ao conectar ao servidor: ${error.message}`);
   }
 }
