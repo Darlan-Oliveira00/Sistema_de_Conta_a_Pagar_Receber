@@ -6,9 +6,10 @@ aside {
     padding: 20px;
 }
 
-aside h2 {
+aside img {
     margin-bottom: 20px;
-    font-size: 20px;
+    width: 100px;
+    height: 100px;
 }
 
 aside ul {
@@ -35,6 +36,7 @@ aside button {
 aside button:hover {
     background-color: #FFC107;
     border: #856404 2px solid;
+    cursor: pointer;
 }
 
 aside button.active {

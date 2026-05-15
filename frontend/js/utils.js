@@ -1,22 +1,18 @@
-// Obter dados do usuário logado (cliente ou fornecedor)
-function obterClienteLogado() {
-    const usuario = localStorage.getItem('usuario');
-    return usuario ? usuario : null;
-}
-
-// Obter tipo de usuário (cliente ou fornecedor)
 function obterTipoUsuario() {
     return localStorage.getItem('tipoUsuario');
 }
 
-// Verificar se usuário está logado
+function obterCfpCnpjUsuario(){
+    return localStorage.getItem('cfpcnpj');
+}
+
 function estaLogado() {
     return localStorage.getItem('usuario') !== null;
 }
 
 function verificarLogin() {
     if (estaLogado()) {
-        renderizarLayout();
+        renderizarPagina('layout');
         return true;
     } else {
         renderizarPagina('login');
@@ -28,12 +24,12 @@ function logout() {
 
     localStorage.removeItem('usuario');
     localStorage.removeItem('tipoUsuario');
+    localStorage.removeItem('cfpcnpj');
 
     renderizarPagina('login');
 }
 
-// Obter nome do usuário
 function obterNomeUsuario() {
-    const usuario = obterClienteLogado();
+    const usuario = localStorage.getItem('usuario');
     return usuario ? usuario : 'Usuário';
 }

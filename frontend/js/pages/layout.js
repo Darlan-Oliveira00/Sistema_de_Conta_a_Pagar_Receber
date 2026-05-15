@@ -1,11 +1,13 @@
 function paginaLayout() {
     return `
         <aside>
-            <h2>Menu</h2>
+            <img src="./imgs/icons/logo.png" alt="logo">
             <ul>
                 <li><button id="btn-dashboard" onclick="renderizarSection('dashboard', event)">Dashboard</button></li>
                 <li><button id="btn-receitas" onclick="renderizarSection('receitas', event)">Cadastro de Receitas</button></li>
                 <li><button id="btn-despesas" onclick="renderizarSection('despesas', event)">Cadastro de Despesas</button></li>
+                <li><button id="btn-despesas" onclick="renderizarSection('itens', event)">Cadastro de Itens</button></li>
+                <li><button id="btn-despesas" onclick="renderizarSection('vendas', event)">Cadastro de Vendas</button></li>
                 <li><button id="btn-relatorio" onclick="renderizarSection('relatorio', event)">Relatorio</button></li>
                 <li><button id="btn-sair" onclick="renderizarSection('sair', event)">Sair</button></li>
             </ul>
@@ -23,12 +25,10 @@ function setupLayout() {
 function renderizarSection(pagina, evento) {
     const section = document.getElementById('section');
 
-    // Remove a classe 'active' de todos os botões
     document.querySelectorAll('aside button').forEach(btn => {
         btn.classList.remove('active');
     });
 
-    // Adiciona a classe 'active' no botão clicado ou no correspondente
     if (evento) {
         evento.target.classList.add('active');
     } else {
@@ -47,6 +47,12 @@ function renderizarSection(pagina, evento) {
             break;
         case 'relatorio':
             section.innerHTML = paginaRelatorio();
+            break;
+        case 'itens':
+            section.innerHTML = paginaItens();
+            break;
+        case 'vendas':
+            section.innerHTML = paginaVendas();
             break;
         case 'sair':
             logout();

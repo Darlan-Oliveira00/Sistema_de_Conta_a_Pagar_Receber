@@ -99,6 +99,10 @@
     border: none;
 }
 
+.btn-entrar button:hover{
+    cursor: pointer;
+}
+
 #cadastrar{
     font-size: 14px;
 }
@@ -109,3 +113,6 @@
     background-color: #FFFFFF;
 }
 
+#cadastrar button:hover{
+    cursor: pointer;
+}

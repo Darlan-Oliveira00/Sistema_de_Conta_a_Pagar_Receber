@@ -1,22 +1,22 @@
-function paginaReceitas(){
+function paginaVendas() {
     return `
-        <div class="card-receita">
-                <h1>Contas a Receber</h1>
+        <div class="card-vendas">
+                <h1>Vendas</h1>
 
                 <div class="top-bar">
-                    <button class="btn-cadastrar-receita" id="cadastrar-receita" onclick="renderizarPagina('cadastroReceita')">Cadastrar Receita</button>
+                    <button class="btn-cadastrar-vendas" id="cadastrar-vendas" onclick="renderizarPagina('cadastroVendas')">Cadastrar Vendas</button>
 
                     <input
                         type="text"
-                        placeholder="Buscar Receita"
+                        placeholder="Buscar Vendas"
                         class="search"
-                        id="buscar-receita"
-                        onkeyup="pesquisarReceita()"
+                        id="buscar-vendas"
+                        onkeyup="pesquisarVendas()"
                     >
                 </div>
 
                 <div class="table-container">
-                    <table id="tabela-receitas">
+                    <table id="tabela-vendas">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -74,19 +74,19 @@ function paginaReceitas(){
     `
 }
 
-function pesquisarReceita() {
-    const input = document.getElementById('buscar-receita');
+function pesquisarVendas() {
+    const input = document.getElementById('buscar-vendas');
     const filtro = input.value.toUpperCase();
-    const tabela = document.getElementById('tabela-receitas');
+    const tabela = document.getElementById('tabela-vendas');
     const linhas = tabela.querySelectorAll('tbody tr');
 
     for (let i = 0; i < linhas.length; i++) {
         const nome = linhas[i].getElementsByTagName('td')[0].textContent;
-        const cpfCnpj = linhas[i].getElementsByTagName('td')[1].textContent;
+        const cpfcnpj = linhas[i].getElementsByTagName('td')[1].textContent;
         const tipo = linhas[i].getElementsByTagName('td')[3].textContent;
 
-        if (nome.toUpperCase().includes(filtro) || 
-            cpfCnpj.toUpperCase().includes(filtro) ||
+        if (nome.toUpperCase().includes(filtro) ||
+            cpfcnpj.toUpperCase().includes(filtro) ||
             tipo.toUpperCase().includes(filtro)) {
             linhas[i].style.display = '';
         } else {

@@ -1,4 +1,3 @@
-// Exemplo em qualquer página
 function paginaDashboard() {
     const nome = obterNomeUsuario();
 
@@ -8,7 +7,9 @@ function paginaDashboard() {
       <div class="cards">
 
         <div class="card">
-          <div class="icon">📈</div>
+          <div class="icon">
+            <img src="./imgs/icons/ascendente.png" >
+          </div>
 
           <h2>Total de Receitas</h2>
 
@@ -18,7 +19,9 @@ function paginaDashboard() {
         </div>
        
         <div class="card">
-          <div class="icon red">📊</div>
+          <div class="icon red">
+            <img src="./imgs/icons/tendencia.png" >
+          </div>
 
           <h2>Total de Despesas</h2>
 
@@ -28,7 +31,9 @@ function paginaDashboard() {
         </div>
        
         <div class="card">
-          <div class="icon">🗂</div>
+          <div class="icon">
+            <img src="./imgs/icons/caixas.png" >
+          </div>
 
           <h2>Total de produtos cadastrados</h2>
 
@@ -38,7 +43,9 @@ function paginaDashboard() {
         </div>
 
         <div class="card">
-          <div class="icon">👜</div>
+          <div class="icon">
+            <img src="./imgs/icons/cesta-de-compras-simples.png" >
+          </div>
 
           <h2>Vendas Registradas</h2>
 

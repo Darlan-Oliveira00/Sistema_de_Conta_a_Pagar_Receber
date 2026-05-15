@@ -1,5 +1,5 @@
-function paginaDespesas(){
-    return`
+function paginaDespesas() {
+    return `
         <div class="card-despesa">
                 <h1>Contas a Pagar</h1>
 
@@ -10,12 +10,13 @@ function paginaDespesas(){
                         type="text"
                         placeholder="Buscar despesas"
                         class="search"
+                        id="buscar-despesa"
+                        onkeyup="pesquisarDespesa()"
                     >
                 </div>
 
-                <!-- TABELA -->
                 <div class="table-container">
-                    <table>
+                    <table id="tabela-despesas">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -71,4 +72,25 @@ function paginaDespesas(){
                 </div>
             </div>
     `
+}
+
+function pesquisarDespesa() {
+    const input = document.getElementById('buscar-despesa');
+    const filtro = input.value.toUpperCase();
+    const tabela = document.getElementById('tabela-despesas');
+    const linhas = tabela.querySelectorAll('tbody tr');
+
+    for (let i = 0; i < linhas.length; i++) {
+        const nome = linhas[i].getElementsByTagName('td')[0].textContent;
+        const cpfCnpj = linhas[i].getElementsByTagName('td')[1].textContent;
+        const tipo = linhas[i].getElementsByTagName('td')[3].textContent;
+
+        if (nome.toUpperCase().includes(filtro) ||
+            cpfCnpj.toUpperCase().includes(filtro) ||
+            tipo.toUpperCase().includes(filtro)) {
+            linhas[i].style.display = '';
+        }else {
+            linhas[i].style.display = 'none';
+        }
+    }
 }

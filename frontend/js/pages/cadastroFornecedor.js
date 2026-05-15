@@ -46,7 +46,6 @@ async function cadastrarFornecedor() {
     const senha = document.getElementById('senha-empresa').value;
     const confirmarSenha = document.getElementById('senha-empresa-cfn').value;
 
-    // Validações básicas
     if (!nome || !cnpj || !email || !telefone || !senha || !confirmarSenha) {
         alert('Preencha todos os campos obrigatórios');
         return;
@@ -77,14 +76,6 @@ async function cadastrarFornecedor() {
         return;
     }
 
-    console.log('Enviando dados:', {
-        nome_oficial_empresa: nome,
-        cnpj: cnpj,
-        email: email,
-        numero_telefone_empresa: telefone,
-        senha: '***'
-    });
-
     try {
         const response = await fetch(`${API_BASE_URL}/fornecedor`, {
             method: 'POST',
@@ -102,21 +93,15 @@ async function cadastrarFornecedor() {
 
         const data = await response.json();
 
-        console.log('Resposta da API:', {
-            status: response.status,
-            data: data
-        });
-
         if (!response.ok) {
             const mensagem = data.detail || `Erro ${response.status}: Erro ao cadastrar fornecedor`;
-            throw new Error(mensagem);
+            alert(mensagem);
         }
 
-        alert('✅ Fornecedor cadastrado com sucesso!');
+        alert('Fornecedor cadastrado com sucesso!');
         renderizarPagina('login');
 
     } catch (error) {
-        console.error('Erro no cadastro:', error);
-        alert(`❌ ${error.message}`);
+        alert(`${error.message}`);
     }
 }

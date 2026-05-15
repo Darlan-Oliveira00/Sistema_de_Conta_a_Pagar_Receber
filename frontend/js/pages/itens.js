@@ -1,22 +1,22 @@
-function paginaReceitas(){
+function paginaItens(){
     return `
-        <div class="card-receita">
-                <h1>Contas a Receber</h1>
+        <div class="card-itens">
+                <h1>Itens</h1>
 
                 <div class="top-bar">
-                    <button class="btn-cadastrar-receita" id="cadastrar-receita" onclick="renderizarPagina('cadastroReceita')">Cadastrar Receita</button>
+                    <button class="btn-cadastrar-itens" id="cadastrar-itens" onclick="renderizarPagina('cadastroItens')">Cadastrar Itens</button>
 
                     <input
                         type="text"
-                        placeholder="Buscar Receita"
+                        placeholder="Buscar Itens"
                         class="search"
-                        id="buscar-receita"
-                        onkeyup="pesquisarReceita()"
+                        id="buscar-itens"
+                        onkeyup="pesquisarItens()"
                     >
                 </div>
 
                 <div class="table-container">
-                    <table id="tabela-receitas">
+                    <table id="tabela-itens">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -74,10 +74,10 @@ function paginaReceitas(){
     `
 }
 
-function pesquisarReceita() {
-    const input = document.getElementById('buscar-receita');
+function pesquisarItens(){
+    const input = document.getElementById('buscar-itens');
     const filtro = input.value.toUpperCase();
-    const tabela = document.getElementById('tabela-receitas');
+    const tabela = document.getElementById('tabela-itens');
     const linhas = tabela.querySelectorAll('tbody tr');
 
     for (let i = 0; i < linhas.length; i++) {

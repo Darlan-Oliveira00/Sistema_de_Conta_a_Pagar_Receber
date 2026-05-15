@@ -30,7 +30,7 @@ function paginaLogin() {
                     </div>
 
                     <div class="btn-entrar">
-                        <button type="button" onclick="fazerLogin()">Entrar</button>
+                        <button type="button" id="btn-logar" onclick="fazerLogin()">Entrar</button>
                     </div>
                 </form>
 
@@ -44,7 +44,6 @@ function paginaLogin() {
     `;
 }
 
-// Mudar placeholder e máximo de caracteres conforme tipo
 function mudarTipoUsuario() {
     const tipoUsuario = document.getElementById('tipoUsuario').value;
     const inputUsuario = document.getElementById('usuario');
@@ -60,7 +59,6 @@ function mudarTipoUsuario() {
     inputUsuario.value = '';
 }
 
-// Faz a validação e autenticação dos dados e redireciona para a pagina layout
 async function fazerLogin() {
     const tipoUsuario = document.getElementById('tipoUsuario').value;
     const cpfCnpj = document.getElementById('usuario').value.replace(/\D/g, '');
@@ -82,42 +80,47 @@ async function fazerLogin() {
     }
 
     try {
-        const rota = tipoUsuario === 'cliente' ? '/login_cliente' : '/login_fornecedor/';
+        const rota = tipoUsuario === 'cliente' ? '/login_cliente' : '/login_fornecedor';
+
+        const body = tipoUsuario === 'cliente'
+            ? { cpf: cpfCnpj, senha }
+            : { cnpj: cpfCnpj, senha };
+
+        const btnLogar = document.getElementById('btn-logar');
+        btnLogar.disabled = true;
+        btnLogar.textContent = "Entrando...";
 
         const response = await fetch(`${API_BASE_URL}${rota}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                cpf: cpfCnpj,
-                cnpj: cpfCnpj,
-                senha
-            })
+            body: JSON.stringify(body)
         });
 
         if (response.ok) {
-            console.log('Login bem-sucedido!');
             const dados = await response.json();
             const nome = tipoUsuario == 'cliente' ? 'nome' : 'nome_oficial_empresa';
-
             localStorage.setItem('usuario', dados[nome]);
             localStorage.setItem('tipoUsuario', tipoUsuario);
+            localStorage.setItem('cfpcnpj', cpfCnpj);
 
-            renderizarLayout();
+            renderizarPagina('layout');
         } else if (response.status === 404) {
             const erro = await response.json();
-            alert('Usuario não encontrado');
-            console.error('Erro: ' + erro.detail);
-        } else if (response.status === 401) { // senha incorreta
+            alert(erro.detail); // Usuario não encontrado
+        } else if (response.status === 401) {
             const erro = await response.json();
-            alert(erro.detail)
+            alert(erro.detail) // senha incorreta
         } else {
             alert('Erro ao fazer login');
-            console.error('Falha no login');
         }
     } catch (error) {
-        console.error('Erro na requisição:', error);
-        alert('Erro ao conectar com o servidor');
+        alert(error);
+    }finally{
+        const btnLogar = document.getElementById('btn-logar');
+        btnLogar.disabled = false;
+        btnLogar.textContent = "Entrar";
     }
+
 }
